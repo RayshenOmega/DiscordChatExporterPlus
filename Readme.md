@@ -1,10 +1,5 @@
 # DiscordChatExporterPlus
 
-[![Build](https://img.shields.io/github/workflow/status/Tyrrrz/DiscordChatExporter/main/master)](https://github.com/Tyrrrz/DiscordChatExporter/actions)
-[![Coverage](https://img.shields.io/codecov/c/github/Tyrrrz/DiscordChatExporter/master)](https://codecov.io/gh/Tyrrrz/DiscordChatExporter)
-[![Release](https://img.shields.io/github/release/Tyrrrz/DiscordChatExporter.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
-[![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
-
 > 🟢 **Project status**: active<sup>[[?]](https://github.com/nulldg/.github/blob/master/docs/project-status.md)</sup>
 
 **DiscordChatExporterPlus** can be used to export message history from a [Discord](https://discord.com) channel to a file.
