@@ -200,15 +200,5 @@ public abstract class ExportCommandBase : TokenCommandBase
         await ExecuteAsync(console, channels);
     }
 
-    public override ValueTask ExecuteAsync(IConsole console)
-    {
-        // War in Ukraine message
-        console.Output.WriteLine("========================================================================");
-        console.Output.WriteLine("||   Ukraine is at war! Support my country in its fight for freedom~  ||");
-        console.Output.WriteLine("||   Learn more on my website: https://tyrrrz.me                      ||");
-        console.Output.WriteLine("========================================================================");
-        console.Output.WriteLine("");
-
-        return default;
-    }
+    public override ValueTask ExecuteAsync(IConsole console) => default;
 }
