@@ -1,20 +1,12 @@
 # DiscordChatExporterPlus
 
-> 🟢 **Project status**: active<sup>[[?]](https://github.com/nulldg/.github/blob/master/docs/project-status.md)</sup>
+> 🟢 **Project status**: active<sup>[[?]](.github/docs/project-status.md)</sup>
 
 **DiscordChatExporterPlus** can be used to export message history from a [Discord](https://discord.com) channel to a file.
 It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as all other rich media features.
 
-## Download
-
 This application comes in two flavors: graphical user interface (**GUI**) and command line interface (**CLI**).
-
-- ⚙️ - Requires .NET runtime to be installed manually:
-  - [.NET v6.0 Runtime for **Windows x64**](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-6.0.0-windows-x64-installer)
-  - [.NET v6.0 Runtime for **Windows x86**](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-6.0.0-windows-x86-installer)
-  - [.NET v6.0 Runtime for **macOS x64**](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-6.0.0-macos-x64-installer)
-  - [.NET v6.0 Runtime for **Linux**](https://docs.microsoft.com/en-us/dotnet/core/install/linux) (find your distro)
-- 🦄 - Community-maintained resource
+Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) or higher, and Linux.
 
 ## Features
 
