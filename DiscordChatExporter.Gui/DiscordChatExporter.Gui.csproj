@@ -6,6 +6,7 @@
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

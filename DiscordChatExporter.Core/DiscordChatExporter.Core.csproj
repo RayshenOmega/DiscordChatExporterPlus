@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
