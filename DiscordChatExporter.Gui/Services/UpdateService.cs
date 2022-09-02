@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Gui.Services;
 public class UpdateService : IDisposable
 {
     private readonly IUpdateManager _updateManager = new UpdateManager(
-        new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
+        new GithubPackageResolver("nulldg", "DiscordChatExporterPlus", "DiscordChatExporterPlus.zip"),
         new ZipPackageExtractor()
     );
 
