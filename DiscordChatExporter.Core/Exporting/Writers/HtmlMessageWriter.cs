@@ -25,17 +25,46 @@ internal class HtmlMessageWriter : MessageWriter
         _themeName = themeName;
     }
 
-    private bool CanJoinGroup(Message message) =>
-        // First message in the group can always join
-        _messageGroup.LastOrDefault() is not { } lastMessage ||
-        // Must be from the same author
-        lastMessage.Author.Id == message.Author.Id &&
-        // Author's name must not have changed between messages
-        string.Equals(lastMessage.Author.FullName, message.Author.FullName, StringComparison.Ordinal) &&
-        // Duration between messages must be 7 minutes or less
-        (message.Timestamp - lastMessage.Timestamp).Duration().TotalMinutes <= 7 &&
-        // Other message must not be a reply
-        message.Reference is null;
+    private bool CanJoinGroup(Message message)
+    {
+        // If the group is empty, any message can join it
+        if (_messageGroup.LastOrDefault() is not { } lastMessage)
+            return true;
+
+        // Reply messages cannot join existing groups because they need to appear first
+        if (message.Kind == MessageKind.Reply)
+            return false;
+
+        // Grouping for system notifications
+        if (message.Kind.IsSystemNotification())
+        {
+            // Can only be grouped with other system notifications
+            if (!lastMessage.Kind.IsSystemNotification())
+                return false;
+        }
+        // Grouping for normal messages
+        else
+        {
+            // Can only be grouped with other normal messages
+            if (lastMessage.Kind.IsSystemNotification())
+                return false;
+
+            // Messages must be within 7 minutes of each other
+            if ((message.Timestamp - lastMessage.Timestamp).Duration().TotalMinutes > 7)
+                return false;
+
+            // Messages must be from the same author
+            if (message.Author.Id != lastMessage.Author.Id)
+                return false;
+
+            // If the user changed their name after the last message, their new messages
+            // cannot join an existing group.
+            if (!string.Equals(message.Author.FullName, lastMessage.Author.FullName, StringComparison.Ordinal))
+                return false;
+        }
+
+        return true;
+    }
 
     // Use <!--wmm:ignore--> to preserve blocks of code inside the templates
     private string Minify(string html) => _minifier
@@ -77,7 +106,7 @@ internal class HtmlMessageWriter : MessageWriter
         await base.WriteMessageAsync(message, cancellationToken);
 
         // If the message can be grouped, buffer it for now
-        if (CanJoinGroup( message))
+        if (CanJoinGroup(message))
         {
             _messageGroup.Add(message);
         }

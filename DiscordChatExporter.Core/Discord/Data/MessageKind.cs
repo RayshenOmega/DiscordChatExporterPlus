@@ -13,3 +13,9 @@ public enum MessageKind
     GuildMemberJoin = 7,
     Reply = 19
 }
+
+public static class MessageKindExtensions
+{
+    public static bool IsSystemNotification(this MessageKind c) =>
+        c is not MessageKind.Default and not MessageKind.Reply;
+}
