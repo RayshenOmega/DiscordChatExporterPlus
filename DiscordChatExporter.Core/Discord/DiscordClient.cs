@@ -22,65 +22,67 @@ public class DiscordClient
     private readonly string _token;
     private readonly Uri _baseUri = new("https://discord.com/api/v9/", UriKind.Absolute);
 
-    private TokenKind _tokenKind = TokenKind.Unknown;
+    private TokenKind? _resolvedTokenKind;
 
     public DiscordClient(string token) => _token = token;
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
-        bool isBot,
+        TokenKind tokenKind,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+        return await Http.ResponseResiliencePolicy.ExecuteAsync(async innerCancellationToken =>
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
-        // Don't validate because token can have invalid characters
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
-        request.Headers.TryAddWithoutValidation(
-            "Authorization",
-            isBot ? $"Bot {_token}" : _token
-        );
+            // Don't validate because token can have invalid characters
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
+            request.Headers.TryAddWithoutValidation(
+                "Authorization",
+                tokenKind == TokenKind.Bot
+                    ? $"Bot {_token}"
+                    : _token
+            );
 
-        return await Http.Client.SendAsync(
-            request,
-            HttpCompletionOption.ResponseHeadersRead,
+            return await Http.Client.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                innerCancellationToken
+            );
+        }, cancellationToken);
+    }
+
+    private async ValueTask<TokenKind> GetTokenKindAsync(CancellationToken cancellationToken = default)
+    {
+        // Try authenticating as a user
+        using var userResponse = await GetResponseAsync(
+            "users/@me",
+            TokenKind.User,
             cancellationToken
         );
+
+        if (userResponse.StatusCode != HttpStatusCode.Unauthorized)
+            return TokenKind.User;
+
+        // Try authenticating as a bot
+        using var botResponse = await GetResponseAsync(
+            "users/@me",
+            TokenKind.Bot,
+            cancellationToken
+        );
+
+        if (botResponse.StatusCode != HttpStatusCode.Unauthorized)
+            return TokenKind.Bot;
+
+        throw DiscordChatExporterException.Unauthorized();
     }
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
         CancellationToken cancellationToken = default)
     {
-        return await Http.ResponseResiliencePolicy.ExecuteAsync(async innerCancellationToken =>
-        {
-            if (_tokenKind == TokenKind.User)
-                return await GetResponseAsync(url, false, innerCancellationToken);
-
-            if (_tokenKind == TokenKind.Bot)
-                return await GetResponseAsync(url, true, innerCancellationToken);
-
-            // Try to authenticate as user
-            var userResponse = await GetResponseAsync(url, false, innerCancellationToken);
-            if (userResponse.StatusCode != HttpStatusCode.Unauthorized)
-            {
-                _tokenKind = TokenKind.User;
-                return userResponse;
-            }
-
-            userResponse.Dispose();
-
-            // Otherwise, try to authenticate as bot
-            var botResponse = await GetResponseAsync(url, true, innerCancellationToken);
-            if (botResponse.StatusCode != HttpStatusCode.Unauthorized)
-            {
-                _tokenKind = TokenKind.Bot;
-                return botResponse;
-            }
-
-            // The token is probably invalid altogether.
-            // Return the last response anyway, upstream should handle the error.
-            return botResponse;
-        }, cancellationToken);
+        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+        return await GetResponseAsync(url, tokenKind, cancellationToken);
     }
 
     private async ValueTask<JsonElement> GetJsonResponseAsync(
@@ -320,6 +322,11 @@ public class DiscordClient
                 // Ensure messages are in range (take into account that last message could have been deleted)
                 if (message.Timestamp > lastMessage.Timestamp)
                     yield break;
+
+                // Make sure the messages are not empty when exporting via a bot
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/918
+                if (_resolvedTokenKind == TokenKind.Bot && message.IsEmpty && !message.Author.IsBot)
+                    throw DiscordChatExporterException.MessageContentIntentMissing();
 
                 // Report progress based on the duration of exported messages divided by total
                 if (progress is not null)
