@@ -8,6 +8,15 @@ It works with direct messages, group messages, and server channels, and supports
 This application comes in two flavors: graphical user interface (**GUI**) and command line interface (**CLI**).
 Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) or higher, and Linux.
 
+
+> **Warning**:
+> To run **DiscordChatExporterPlus** on macOS and Linux, you need to make sure that **.NET Runtime v6** is installed.
+> You can download it here:
+>
+> - [.NET Runtime v6 for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.11-macos-x64-installer)
+> - [.NET Runtime v6 for **macOS Arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.11-macos-arm64-installer)
+> - [.NET Runtime v6 for **Linux**](https://docs.microsoft.com/en-us/dotnet/core/install/linux) (find the correct download for your distro)
+
 ## Features
 
 - Graphical user interface (Windows)
