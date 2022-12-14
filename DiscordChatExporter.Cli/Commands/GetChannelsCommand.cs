@@ -16,10 +16,9 @@ public class GetChannelsCommand : TokenCommandBase
     [CommandOption(
         "guild",
         'g',
-        IsRequired = true,
         Description = "Guild ID."
     )]
-    public Snowflake GuildId { get; init; }
+    public required Snowflake GuildId { get; init; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
