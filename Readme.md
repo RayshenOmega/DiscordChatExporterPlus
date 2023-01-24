@@ -4,7 +4,8 @@
 
 This is a fork of **DiscordChatExporter** with the political cancer, popups, "sanctions", anti-russian hate, etc removed.
 
-**DiscordChatExporter** can be used to export message history from a [Discord](https://discord.com) channel to a file.
+**DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
+It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 
 This application comes in two flavors: graphical user interface (**GUI**) and command line interface (**CLI**).
 Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) or higher, and Linux.
