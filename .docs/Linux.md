@@ -1,0 +1,20 @@
+# Linux usage instructions
+
+## Installing .NET Runtime
+
+Please follow the [instructions provided here](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Dotnet.md).
+
+## Downloading and using DiscordChatExporter.Cli
+
+1. Download [DiscordChatExporterPlus.CLI.zip](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) and extract it to a folder.
+2. Open Terminal.
+3. `cd` into the extracted folder. You can do this in Terminal by typing `cd`, then press the SPACE key, drag and drop the extracted folder into the Terminal window, and press the ENTER key.
+4. Replace `TOKEN` and `CHANNEL`, then execute this command to export:
+
+```
+dotnet DiscordChatExporter.Cli.dll export -t TOKEN -c CHANNEL
+```
+
+> [How to get Token and Channel IDs](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Token-and-IDs.md).
+
+There's much more you can do with DCE.CLI! Read the [CLI explained](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Getting-started.md#dcecli-commands-) page to get started.
