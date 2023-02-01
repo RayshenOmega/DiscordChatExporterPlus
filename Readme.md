@@ -9,7 +9,7 @@ It works with direct messages, group messages, and server channels, and supports
 
 > ❔ If you have questions or issues, **please refer to the [docs](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs)**.
 
-This application comes in two flavors: graphical user interface (**GUI**) and command line interface (**CLI**).
+This application comes in two flavors: graphical user interface (**GUI**) and command-line interface (**CLI**).
 Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) or higher, and Linux.
 
 
@@ -24,7 +24,7 @@ Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) o
 ## Features
 
 - Graphical user interface (Windows)
-- Command line interface (Windows, Linux, macOS)
+- Command-line interface (Windows, Linux, macOS)
 - Authentication via both user and bot tokens
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features

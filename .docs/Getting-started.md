@@ -15,7 +15,7 @@ The information presented on this page is valid for **all** platforms.
 
 - **Graphical User Interface** (**GUI**) - it's the preferred version for newcomers as it is easy to use.
   You can get it by [downloading](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) the `DiscordChatExporterPlus.zip` file.
-- **Command Line Interface** (**CLI**) - offers greater flexibility and more features for advanced users, such as export scheduling, ID lists, and more specific date ranges.
+- **Command-Line Interface** (**CLI**) - offers greater flexibility and more features for advanced users, such as export scheduling, ID lists, and more specific date ranges.
   You can get it by [downloading](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) the `DiscordChatExporterPlus.CLI.zip` file.
 
 If you're not comfortable with **Windows'** Command Line (cmd), please choose the GUI.
