@@ -1,17 +1,18 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class ContentSpecs : IClassFixture<ExportWrapperFixture>
+public class HtmlContentSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public ContentSpecs(ExportWrapperFixture exportWrapper)
+    public HtmlContentSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }
@@ -20,10 +21,10 @@ public class ContentSpecs : IClassFixture<ExportWrapperFixture>
     public async Task Messages_are_exported_correctly()
     {
         // Act
-        var messages = await _exportWrapper.GetMessagesAsJsonAsync(ChannelIds.DateRangeTestCases);
+        var messages = await _exportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
 
         // Assert
-        messages.Select(j => j.GetProperty("id").GetString()).Should().Equal(
+        messages.Select(e => e.GetAttribute("data-message-id")).Should().Equal(
             "866674314627121232",
             "866710679758045195",
             "866732113319428096",
@@ -34,7 +35,7 @@ public class ContentSpecs : IClassFixture<ExportWrapperFixture>
             "885169254029213696"
         );
 
-        messages.Select(j => j.GetProperty("content").GetString()).Should().Equal(
+        messages.SelectMany(e => e.Text()).Should().ContainInOrder(
             "Hello world",
             "Goodbye world",
             "Foo bar",

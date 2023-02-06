@@ -7,18 +7,17 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
-using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class GroupingSpecs : IClassFixture<TempOutputFixture>
+public class HtmlGroupingSpecs : IClassFixture<TempOutputFixture>
 {
     private readonly TempOutputFixture _tempOutput;
 
-    public GroupingSpecs(TempOutputFixture tempOutput)
+    public HtmlGroupingSpecs(TempOutputFixture tempOutput)
     {
         _tempOutput = tempOutput;
     }
@@ -41,7 +40,7 @@ public class GroupingSpecs : IClassFixture<TempOutputFixture>
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messageGroups = Html
+        var messageGroups = Utils.Html
             .Parse(await File.ReadAllTextAsync(filePath))
             .QuerySelectorAll(".chatlog__message-group");
 

@@ -5,11 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
-using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Writing;
 
-namespace DiscordChatExporter.Core.Exporting.Writers;
+namespace DiscordChatExporter.Core.Exporting;
 
 internal class JsonMessageWriter : MessageWriter
 {
@@ -209,6 +208,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteStartObject("emoji");
         _writer.WriteString("id", reaction.Emoji.Id.ToString());
         _writer.WriteString("name", reaction.Emoji.Name);
+        _writer.WriteString("code", reaction.Emoji.Code);
         _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
         _writer.WriteString("imageUrl", await Context.ResolveAssetUrlAsync(reaction.Emoji.ImageUrl, cancellationToken));
         _writer.WriteEndObject();
@@ -244,7 +244,12 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteStartObject("guild");
         _writer.WriteString("id", Context.Request.Guild.Id.ToString());
         _writer.WriteString("name", Context.Request.Guild.Name);
-        _writer.WriteString("iconUrl", await Context.ResolveAssetUrlAsync(Context.Request.Guild.IconUrl, cancellationToken));
+
+        _writer.WriteString(
+            "iconUrl",
+            await Context.ResolveAssetUrlAsync(Context.Request.Guild.IconUrl, cancellationToken)
+        );
+
         _writer.WriteEndObject();
 
         // Channel
@@ -255,6 +260,15 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("category", Context.Request.Channel.Category.Name);
         _writer.WriteString("name", Context.Request.Channel.Name);
         _writer.WriteString("topic", Context.Request.Channel.Topic);
+
+        if (!string.IsNullOrWhiteSpace(Context.Request.Channel.IconUrl))
+        {
+            _writer.WriteString(
+                "iconUrl",
+                await Context.ResolveAssetUrlAsync(Context.Request.Channel.IconUrl, cancellationToken)
+            );
+        }
+
         _writer.WriteEndObject();
 
         // Date range
@@ -295,7 +309,12 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("nickname", Context.TryGetMember(message.Author.Id)?.Nick ?? message.Author.Name);
         _writer.WriteString("color", Context.TryGetUserColor(message.Author.Id)?.ToHex());
         _writer.WriteBoolean("isBot", message.Author.IsBot);
-        _writer.WriteString("avatarUrl", await Context.ResolveAssetUrlAsync(message.Author.AvatarUrl, cancellationToken));
+
+        _writer.WriteString(
+            "avatarUrl",
+            await Context.ResolveAssetUrlAsync(message.Author.AvatarUrl, cancellationToken)
+        );
+
         _writer.WriteEndObject();
 
         // Attachments
