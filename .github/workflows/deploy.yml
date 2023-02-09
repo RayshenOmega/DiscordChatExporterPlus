@@ -1,4 +1,4 @@
-name: main
+name: auto-deploy
 
 on: push
 
@@ -44,4 +44,4 @@ jobs:
             DiscordChatExporterPlus.Cli.zip
             DiscordChatExporterPlus.zip
           body: |
-            [Changelog](https://github.com/nulldg/DiscordChatExporter/blob/master/Changelog.md)
+            [Changelog](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/Changelog.md)
