@@ -79,6 +79,7 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
 
         _settingsService.Load();
 
+        // Sync theme with settings
         if (_settingsService.IsDarkModeEnabled)
         {
             App.SetDarkTheme();
@@ -86,6 +87,18 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         else
         {
             App.SetLightTheme();
+        }
+
+        // App has just been updated, display changelog
+        if (_settingsService.LastAppVersion is not null && _settingsService.LastAppVersion != App.Version)
+        {
+            Notifications.Enqueue(
+                $"Successfully updated to {App.Name} v{App.VersionString}",
+                "CHANGELOG", () => ProcessEx.StartShellExecute(App.ChangelogUrl)
+            );
+
+            _settingsService.LastAppVersion = App.Version;
+            _settingsService.Save();
         }
     }
 
