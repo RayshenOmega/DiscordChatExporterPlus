@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AsyncKeyedLock;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Utils;
@@ -20,7 +21,11 @@ namespace DiscordChatExporter.Cli.Tests.Infra;
 
 public static class ExportWrapper
 {
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> Locks = new();
+    private static readonly AsyncKeyedLocker<string> Locker = new(o =>
+    {
+        o.PoolSize = 20;
+        o.PoolInitialFill = 1;
+    });
 
     private static readonly string DirPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
@@ -42,15 +47,12 @@ public static class ExportWrapper
 
     private static async ValueTask<string> ExportAsync(Snowflake channelId, ExportFormat format)
     {
+        var fileName = channelId.ToString() + '.' + format.GetFileExtension();
+        var filePath = Path.Combine(DirPath, fileName);
+
         // Lock separately for each channel and format
-        var channelLock = Locks.GetOrAdd($"{channelId}_{format}", _ => new SemaphoreSlim(1, 1));
-        await channelLock.WaitAsync();
-
-        try
+        using (await Locker.LockAsync(filePath))
         {
-            var fileName = channelId.ToString() + '.' + format.GetFileExtension();
-            var filePath = Path.Combine(DirPath, fileName);
-
             // Perform export only if it hasn't been done before
             if (!File.Exists(filePath))
             {
@@ -64,10 +66,6 @@ public static class ExportWrapper
             }
 
             return await File.ReadAllTextAsync(filePath);
-        }
-        finally
-        {
-            channelLock.Release();
         }
     }
 
