@@ -130,7 +130,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         // Try to extract the message ID if the link points to a Discord message
         var linkedMessageId = Regex.Match(
             link.Url,
-            "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$"
+            @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$"
         ).Groups[1].Value;
 
         _buffer.Append(
@@ -195,6 +195,12 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         }
         else if (mention.Kind == MentionKind.User)
         {
+            // User mentions are not always included in the message object,
+            // which means they need to be populated on demand.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/304
+            if (mention.TargetId is not null)
+                await _context.PopulateMemberAsync(mention.TargetId.Value, cancellationToken);
+
             var member = mention.TargetId?.Pipe(_context.TryGetMember);
             var fullName = member?.User.FullName ?? "Unknown";
             var nick = member?.Nick ?? "Unknown";

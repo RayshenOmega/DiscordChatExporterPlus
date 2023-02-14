@@ -4,6 +4,7 @@
 @using System.Threading.Tasks
 @using DiscordChatExporter.Core.Discord.Data
 @using DiscordChatExporter.Core.Discord.Data.Embeds
+@using DiscordChatExporter.Core.Markdown.Parsing
 @using DiscordChatExporter.Core.Utils.Extensions
 
 @inherits RazorBlade.HtmlTemplate
@@ -80,6 +81,8 @@
                                 MessageKind.ChannelNameChange => "pencil-icon",
                                 MessageKind.ChannelIconChange => "pencil-icon",
                                 MessageKind.ChannelPinnedMessage => "pin-icon",
+                                MessageKind.GuildMemberJoin => "join-icon",
+                                MessageKind.ThreadCreated => "thread-icon",
                                 _ => "pencil-icon"
                             };
                         }
@@ -309,6 +312,49 @@
                         </div>
                     }
 
+                    @{/* Invites */}
+                    @{
+                        var inviteCodes = MarkdownParser
+                            .ExtractLinks(message.Content)
+                            .Select(l => l.Url)
+                            .Select(Invite.TryGetCodeFromUrl)
+                            .WhereNotNull()
+                            .ToArray();
+
+                        foreach (var inviteCode in inviteCodes)
+                        {
+                            var invite = await ExportContext.Discord.TryGetGuildInviteAsync(inviteCode, CancellationToken);
+                            if (invite is null)
+                            {
+                                continue;
+                            }
+
+                            <div class="chatlog__embed">
+                                <div class="chatlog__embed-invite-container">
+                                    <div class="chatlog__embed-invite-title">Invite to join a server</div>
+                                    <div class="chatlog__embed-invite">
+                                        <div class="chatlog__embed-invite-guild-icon-container">
+                                            <img class="chatlog__embed-invite-guild-icon" src="@await ResolveAssetUrlAsync(invite.Guild?.IconUrl ?? Guild.DirectMessages.IconUrl)" alt="Guild icon" loading="lazy">
+                                        </div>
+                                        <div class="chatlog__embed-invite-info">
+                                            <div class="chatlog__embed-invite-guild-name">
+                                                <a href="https://discord.gg/@invite.Code">
+                                                    @(invite.Guild?.Name ?? "Unknown guild")
+                                                </a>
+                                            </div>
+                                            <div class="chatlog__embed-invite-channel-name">
+                                                <svg class="chatlog__embed-invite-channel-icon">
+                                                    <use href="#channel-icon"></use>
+                                                </svg>
+                                                <span> @(invite.Channel?.Name ?? "Unknown channel")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
                     @{/* Embeds */}
                     @foreach (var embed in message.Embeds)
                     {
@@ -390,11 +436,11 @@
                             </div>
                         }
                         // Generic image embed
-                        else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Url))
+                        else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Image?.Url))
                         {
                             <div class="chatlog__embed">
-                                <a href="@await ResolveAssetUrlAsync(embed.Url)">
-                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embed.Url)" alt="Embedded image" loading="lazy">
+                                <a href="@await ResolveAssetUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)">
+                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)" alt="Embedded image" loading="lazy">
                                 </a>
                             </div>
                         }

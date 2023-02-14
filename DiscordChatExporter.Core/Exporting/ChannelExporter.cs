@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Exceptions;
-using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -24,22 +20,11 @@ public class ChannelExporter
         CancellationToken cancellationToken = default)
     {
         // Build context
-        var contextMembers = new HashSet<Member>(IdBasedEqualityComparer.Instance);
-        var contextChannels = await _discord.GetGuildChannelsAsync(request.Guild.Id, cancellationToken);
-        var contextRoles = await _discord.GetGuildRolesAsync(request.Guild.Id, cancellationToken);
-
-        var context = new ExportContext(
-            request,
-            contextMembers,
-            contextChannels,
-            contextRoles
-        );
+        var context = new ExportContext(_discord, request);
+        await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
         // Export messages
         await using var messageExporter = new MessageExporter(context);
-
-        var exportedAnything = false;
-        var encounteredUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
 
         await foreach (var message in _discord.GetMessagesAsync(
                            request.Channel.Id,
@@ -48,34 +33,17 @@ public class ChannelExporter
                            progress,
                            cancellationToken))
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            // Resolve members for the author and mentioned users
+            foreach (var user in message.MentionedUsers.Prepend(message.Author))
+                await context.PopulateMemberAsync(user.Id, cancellationToken);
 
-            // Skip messages that fail to pass the supplied filter
-            if (!request.MessageFilter.IsMatch(message))
-                continue;
-
-            // Resolve members for referenced users
-            foreach (var referencedUser in message.MentionedUsers.Prepend(message.Author))
-            {
-                if (!encounteredUsers.Add(referencedUser))
-                    continue;
-
-                var member = await _discord.GetGuildMemberAsync(
-                    request.Guild.Id,
-                    referencedUser,
-                    cancellationToken
-                );
-
-                contextMembers.Add(member);
-            }
-
-            // Export message
-            await messageExporter.ExportMessageAsync(message, cancellationToken);
-            exportedAnything = true;
+            // Export the message
+            if (request.MessageFilter.IsMatch(message))
+                await messageExporter.ExportMessageAsync(message, cancellationToken);
         }
 
         // Throw if no messages were exported
-        if (!exportedAnything)
+        if (messageExporter.MessagesExported <= 0)
             throw DiscordChatExporterException.ChannelIsEmpty();
     }
 }

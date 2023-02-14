@@ -14,28 +14,45 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal class ExportContext
 {
+    private readonly Dictionary<Snowflake, Member?> _members = new();
+    private readonly Dictionary<Snowflake, Channel> _channels = new();
+    private readonly Dictionary<Snowflake, Role> _roles = new();
     private readonly ExportAssetDownloader _assetDownloader;
 
+    public DiscordClient Discord { get; }
     public ExportRequest Request { get; }
 
-    public IReadOnlyCollection<Member> Members { get; }
-
-    public IReadOnlyCollection<Channel> Channels { get; }
-
-    public IReadOnlyCollection<Role> Roles { get; }
-
-    public ExportContext(
-        ExportRequest request,
-        IReadOnlyCollection<Member> members,
-        IReadOnlyCollection<Channel> channels,
-        IReadOnlyCollection<Role> roles)
+    public ExportContext(DiscordClient discord,
+        ExportRequest request)
     {
+        Discord = discord;
         Request = request;
-        Members = members;
-        Channels = channels;
-        Roles = roles;
 
-        _assetDownloader = new ExportAssetDownloader(request.OutputAssetsDirPath, request.ShouldReuseAssets);
+        _assetDownloader = new ExportAssetDownloader(
+            request.OutputAssetsDirPath,
+            request.ShouldReuseAssets
+        );
+    }
+
+    public async ValueTask PopulateChannelsAndRolesAsync(CancellationToken cancellationToken = default)
+    {
+        await foreach (var channel in Discord.GetGuildChannelsAsync(Request.Guild.Id, cancellationToken))
+            _channels[channel.Id] = channel;
+
+        await foreach (var role in Discord.GetGuildRolesAsync(Request.Guild.Id, cancellationToken))
+            _roles[role.Id] = role;
+    }
+
+    // Because members are not pulled in bulk, we need to populate them on demand
+    public async ValueTask PopulateMemberAsync(Snowflake id, CancellationToken cancellationToken = default)
+    {
+        if (_members.ContainsKey(id))
+            return;
+
+        var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
+
+        // Store the result even if it's null, to avoid re-fetching non-existing members
+        _members[id] = member;
     }
 
     public string FormatDate(DateTimeOffset instant) => Request.DateFormat switch
@@ -45,18 +62,23 @@ internal class ExportContext
         var format => instant.ToLocalString(format)
     };
 
-    public Member? TryGetMember(Snowflake id) => Members.FirstOrDefault(m => m.Id == id);
+    public Member? TryGetMember(Snowflake id) => _members.GetValueOrDefault(id);
 
-    public Channel? TryGetChannel(Snowflake id) => Channels.FirstOrDefault(c => c.Id == id);
+    public Channel? TryGetChannel(Snowflake id) => _channels.GetValueOrDefault(id);
 
-    public Role? TryGetRole(Snowflake id) => Roles.FirstOrDefault(r => r.Id == id);
+    public Role? TryGetRole(Snowflake id) => _roles.GetValueOrDefault(id);
 
     public Color? TryGetUserColor(Snowflake id)
     {
         var member = TryGetMember(id);
-        var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);
 
-        return roles?
+        var memberRoles = member?
+            .RoleIds
+            .Select(TryGetRole)
+            .WhereNotNull()
+            .ToArray();
+
+        return memberRoles?
             .Where(r => r.Color is not null)
             .OrderByDescending(r => r.Position)
             .Select(r => r.Color)

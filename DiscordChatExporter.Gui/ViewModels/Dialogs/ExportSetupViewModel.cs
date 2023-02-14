@@ -101,18 +101,30 @@ public class ExportSetupViewModel : DialogScreen
             var extension = SelectedFormat.GetFileExtension();
             var filter = $"{extension.ToUpperInvariant()} files|*.{extension}";
 
-            OutputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            var outputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            if (!string.IsNullOrWhiteSpace(outputPath))
+                OutputPath = outputPath;
         }
         else
         {
-            OutputPath = _dialogManager.PromptDirectoryPath();
+            var outputPath = _dialogManager.PromptDirectoryPath();
+            if (!string.IsNullOrWhiteSpace(outputPath))
+                OutputPath = outputPath;
         }
     }
 
-    public bool CanConfirm => !string.IsNullOrWhiteSpace(OutputPath);
-
     public void Confirm()
     {
+        // Prompt the output path if it's not set yet
+        if (string.IsNullOrWhiteSpace(OutputPath))
+        {
+            ShowOutputPathPrompt();
+
+            // If the output path is still not set, cancel the export
+            if (string.IsNullOrWhiteSpace(OutputPath))
+                return;
+        }
+
         // Persist preferences
         _settingsService.LastExportFormat = SelectedFormat;
         _settingsService.LastPartitionLimitValue = PartitionLimitValue;
