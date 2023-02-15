@@ -191,8 +191,9 @@ public class DashboardViewModel : PropertyChangedBase
                             dialog.Before?.Pipe(Snowflake.FromDate),
                             dialog.PartitionLimit,
                             dialog.MessageFilter,
+                            dialog.ShouldFormatMarkdown,
                             dialog.ShouldDownloadAssets,
-                            _settingsService.ShouldReuseAssets,
+                            dialog.ShouldReuseAssets,
                             _settingsService.DateFormat
                         );
 
