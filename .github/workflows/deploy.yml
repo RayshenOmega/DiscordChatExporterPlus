@@ -28,11 +28,11 @@ jobs:
         run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
 
       - name: Create package (CLI)
-        run: Compress-Archive -Path DiscordChatExporter.Cli/* -DestinationPath DiscordChatExporterPlus.Cli.zip -Force
+        run: Compress-Archive -Path DiscordChatExporter.Cli/bin/Publish/* -DestinationPath DiscordChatExporterPlus.Cli.zip -Force
         shell: pwsh
 
       - name: Create package (GUI)
-        run: Compress-Archive -Path DiscordChatExporter.Gui/* -DestinationPath DiscordChatExporterPlus.zip -Force
+        run: Compress-Archive -Path DiscordChatExporter.Gui/bin/Publish/* -DestinationPath DiscordChatExporterPlus.zip -Force
         shell: pwsh
 
       - name: Create release
