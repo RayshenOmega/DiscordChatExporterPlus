@@ -15,7 +15,7 @@ public partial class App
 
     public static string VersionString { get; } = Version.ToString(3);
 
-    public static string ProjectUrl { get; } = "https://github.com/nulldg/DiscordChatExporter";
+    public static string ProjectUrl { get; } = "https://github.com/nulldg/DiscordChatExporterPlus";
 
     public static string ChangelogUrl { get; } = ProjectUrl + "/blob/master/Changelog.md";
 
