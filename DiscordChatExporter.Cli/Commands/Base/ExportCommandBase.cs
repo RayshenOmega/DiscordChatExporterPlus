@@ -98,6 +98,20 @@ public abstract class ExportCommandBase : TokenCommandBase
     )]
     public bool ShouldReuseAssets { get; init; }
 
+    private readonly string? _assetsDirPath;
+
+    [CommandOption(
+        "media-dir",
+        Description = "Download assets to this directory. If not specified, the asset directory path will be derived from the output path."
+    )]
+    public string? AssetsDirPath
+    {
+        get => _assetsDirPath;
+        // Handle ~/ in paths on Unix systems
+        // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
+        init => _assetsDirPath = value is not null ? Path.GetFullPath(value) : null;
+    }
+
     [CommandOption(
         "dateformat",
         Description = "Format used when writing dates."
@@ -115,6 +129,14 @@ public abstract class ExportCommandBase : TokenCommandBase
         {
             throw new CommandException(
                 "Option --reuse-media cannot be used without --media."
+            );
+        }
+
+        // Assets directory should only be specified when the download assets option is set
+        if (!string.IsNullOrWhiteSpace(AssetsDirPath) && !ShouldDownloadAssets)
+        {
+            throw new CommandException(
+                "Option --media-dir cannot be used without --media."
             );
         }
 
@@ -166,6 +188,7 @@ public abstract class ExportCommandBase : TokenCommandBase
                                     guild,
                                     channel,
                                     OutputPath,
+                                    AssetsDirPath,
                                     ExportFormat,
                                     After,
                                     Before,

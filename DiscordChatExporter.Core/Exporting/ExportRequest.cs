@@ -10,36 +10,87 @@ using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-public partial record ExportRequest(
-    Guild Guild,
-    Channel Channel,
-    string OutputPath,
-    ExportFormat Format,
-    Snowflake? After,
-    Snowflake? Before,
-    PartitionLimit PartitionLimit,
-    MessageFilter MessageFilter,
-    bool ShouldFormatMarkdown,
-    bool ShouldDownloadAssets,
-    bool ShouldReuseAssets,
-    string DateFormat)
+public partial class ExportRequest
 {
-    private string? _outputBaseFilePath;
-    public string OutputBaseFilePath => _outputBaseFilePath ??= GetOutputBaseFilePath(
-        Guild,
-        Channel,
-        OutputPath,
-        Format,
-        After,
-        Before
-    );
+    public Guild Guild { get; }
 
-    public string OutputBaseDirPath => Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
+    public Channel Channel { get; }
 
-    public string OutputAssetsDirPath => $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
+    public string OutputFilePath { get; }
+
+    public string OutputDirPath { get; }
+
+    public string AssetsDirPath { get; }
+
+    public ExportFormat Format { get; }
+
+    public Snowflake? After { get; }
+
+    public Snowflake? Before { get; }
+
+    public PartitionLimit PartitionLimit { get; }
+
+    public MessageFilter MessageFilter { get; }
+
+    public bool ShouldFormatMarkdown { get; }
+
+    public bool ShouldDownloadAssets { get; }
+
+    public bool ShouldReuseAssets { get; }
+
+    public string DateFormat { get; }
+
+    public ExportRequest(
+        Guild guild,
+        Channel channel,
+        string outputPath,
+        string? assetsDirPath,
+        ExportFormat format,
+        Snowflake? after,
+        Snowflake? before,
+        PartitionLimit partitionLimit,
+        MessageFilter messageFilter,
+        bool shouldFormatMarkdown,
+        bool shouldDownloadAssets,
+        bool shouldReuseAssets,
+        string dateFormat)
+    {
+        Guild = guild;
+        Channel = channel;
+        Format = format;
+        After = after;
+        Before = before;
+        PartitionLimit = partitionLimit;
+        MessageFilter = messageFilter;
+        ShouldFormatMarkdown = shouldFormatMarkdown;
+        ShouldDownloadAssets = shouldDownloadAssets;
+        ShouldReuseAssets = shouldReuseAssets;
+        DateFormat = dateFormat;
+
+        OutputFilePath = GetOutputBaseFilePath(
+            Guild,
+            Channel,
+            outputPath,
+            Format,
+            After,
+            Before
+        );
+
+        OutputDirPath = Path.GetDirectoryName(OutputFilePath)!;
+
+        AssetsDirPath = !string.IsNullOrWhiteSpace(assetsDirPath)
+            ? FormatPath(
+                assetsDirPath,
+                Guild,
+                Channel,
+                After,
+                Before
+            )
+            : $"{OutputFilePath}_Files{Path.DirectorySeparatorChar}";
+    }
 }
 
-public partial record ExportRequest
+public partial class ExportRequest
 {
     public static string GetDefaultOutputFileName(
         Guild guild,
@@ -83,17 +134,15 @@ public partial record ExportRequest
         return PathEx.EscapeFileName(buffer.ToString());
     }
 
-    private static string GetOutputBaseFilePath(
+    private static string FormatPath(
+        string path,
         Guild guild,
         Channel channel,
-        string outputPath,
-        ExportFormat format,
-        Snowflake? after = null,
-        Snowflake? before = null)
+        Snowflake? after,
+        Snowflake? before)
     {
-        // Format path
-        var actualOutputPath = Regex.Replace(
-            outputPath,
+        return Regex.Replace(
+            path,
             "%.",
             m => PathEx.EscapeFileName(m.Value switch
             {
@@ -112,6 +161,17 @@ public partial record ExportRequest
                 _ => m.Value
             })
         );
+    }
+
+    private static string GetOutputBaseFilePath(
+        Guild guild,
+        Channel channel,
+        string outputPath,
+        ExportFormat format,
+        Snowflake? after = null,
+        Snowflake? before = null)
+    {
+        var actualOutputPath = FormatPath(outputPath, guild, channel, after, before);
 
         // Output is a directory
         if (Directory.Exists(actualOutputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(actualOutputPath)))

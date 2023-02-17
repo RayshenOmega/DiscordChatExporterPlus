@@ -33,6 +33,8 @@ public partial class SettingsService : SettingsManager
 
     public bool LastShouldReuseAssets { get; set; }
 
+    public string? LastAssetsDirPath { get; set; }
+
     public SettingsService()
     {
         Configuration.StorageSpace = StorageSpace.Instance;
