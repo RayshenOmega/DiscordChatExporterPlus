@@ -15,8 +15,4 @@
     <PackageReference Include="WebMarkupMin.Core" Version="2.13.8" />
   </ItemGroup>
 
-  <ItemGroup>
-    <RazorBlade Include="**\*.cshtml" />
-  </ItemGroup>
-
 </Project>
