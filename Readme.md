@@ -37,7 +37,7 @@ If you already have a copy of DiscordChatExporter and wish to switch to this for
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features
 - File partitioning, date ranges, message filtering, and other export options
-- Self-contained exports that don't require internet
+- Self-contained exports which can be viewed offline
 
 ## Screenshots
 
