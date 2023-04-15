@@ -6,12 +6,6 @@ This fork acts as a drop-in replacement for DiscordChatExporter, and is set to u
 
 ----
 
-To install, download the [latest release](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) and extract the zip into an empty directory.
-
-If you already have a copy of DiscordChatExporter and wish to switch to this fork, you can simply overwrite the existing files. Your settings will be preserved.
-
-----
-
 **DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
 It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 
@@ -20,6 +14,12 @@ It works with direct messages, group messages, and server channels, and supports
 This application comes in two flavors: graphical user interface (**GUI**) and command-line interface (**CLI**).
 Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) or higher, and Linux.
 
+
+## Installation
+
+To install this fork, download the [latest release](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) and extract the zip into an empty directory.
+
+If you already have a copy of DiscordChatExporter and wish to switch to this fork, you can simply overwrite the existing files. Your settings will be preserved.
 
 > **Warning**:
 > To run **DiscordChatExporterPlus** on macOS and Linux, you need to make sure that **.NET 7.0 Runtime** is installed.
