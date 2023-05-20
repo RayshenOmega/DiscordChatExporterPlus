@@ -40,7 +40,7 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
 
         DisplayName = $"{App.Name} v{App.VersionString}";
     }
-    
+	
     private async ValueTask CheckForUpdatesAsync()
     {
         try
@@ -79,7 +79,7 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
 
         _settingsService.Load();
 
-        // Sync theme with settings
+        // Sync the theme with settings
         if (_settingsService.IsDarkModeEnabled)
         {
             App.SetDarkTheme();
@@ -89,7 +89,7 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
             App.SetLightTheme();
         }
 
-        // App has just been updated, display changelog
+        // App has just been updated, display the changelog
         if (_settingsService.LastAppVersion is not null && _settingsService.LastAppVersion != App.Version)
         {
             Notifications.Enqueue(
@@ -110,8 +110,7 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         _updateService.FinalizeUpdate(false);
     }
 
-    public void Handle(NotificationMessage message) =>
-        Notifications.Enqueue(message.Text);
+    public void Handle(NotificationMessage message) => Notifications.Enqueue(message.Text);
 
     public void Dispose() => Notifications.Dispose();
 }

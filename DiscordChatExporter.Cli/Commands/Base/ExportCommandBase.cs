@@ -29,8 +29,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
         'o',
         Description =
             "Output file or directory path. " +
-            "If a directory is specified, file names will be generated automatically based on the channel names and other parameters. " +
-            "Directory path should end with a slash to avoid ambiguity. " +
+            "Directory path must end with a slash to avoid ambiguity. " +
+            "If a directory is specified, file names will be generated automatically. " +
             "Supports template tokens, see the documentation for more info."
     )]
     public string OutputPath
@@ -64,13 +64,16 @@ public abstract class ExportCommandBase : DiscordCommandBase
         "partition",
         'p',
         Description =
-            "Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')."
+            "Split the output into partitions, each limited to the specified " +
+            "number of messages (e.g. '100') or file size (e.g. '10mb')."
     )]
     public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
 
     [CommandOption(
         "filter",
-        Description = "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image')."
+        Description =
+            "Only include messages that satisfy this filter. " +
+            "See the documentation for more info."
     )]
     public MessageFilter MessageFilter { get; init; } = MessageFilter.Null;
 
@@ -102,7 +105,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     [CommandOption(
         "media-dir",
-        Description = "Download assets to this directory. If not specified, the asset directory path will be derived from the output path."
+        Description =
+            "Download assets to this directory. " +
+            "If not specified, the asset directory path will be derived from the output path."
     )]
     public string? AssetsDirPath
     {
@@ -123,7 +128,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
-        // Reuse assets option should only be used when the download assets option is set.
+        // Asset reuse can only be enabled if the download assets option is set
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
         if (ShouldReuseAssets && !ShouldDownloadAssets)
         {
@@ -132,7 +137,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
-        // Assets directory should only be specified when the download assets option is set
+        // Assets directory can only be specified if the download assets option is set
         if (!string.IsNullOrWhiteSpace(AssetsDirPath) && !ShouldDownloadAssets)
         {
             throw new CommandException(
@@ -140,8 +145,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
-        // Make sure the user does not try to export all channels into a single file.
-        // Output path must either be a directory, or contain template tokens.
+        // Make sure the user does not try to export multiple channels into one file.
+        // Output path must either be a directory or contain template tokens for this to work.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/799
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/917
         var isValidOutputPath =
@@ -216,7 +221,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         });
 
-        // Print result
+        // Print the result
         using (console.WithForegroundColor(ConsoleColor.White))
         {
             await console.Output.WriteLineAsync(
@@ -231,28 +236,26 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
-                await console.Output.WriteLineAsync(
+                await console.Error.WriteLineAsync(
                     $"Failed to export {errors.Count} channel(s):"
                 );
             }
 
             foreach (var (channel, error) in errors)
             {
-                await console.Output.WriteAsync($"{channel.Category.Name} / {channel.Name}: ");
+                await console.Error.WriteAsync($"{channel.Category.Name} / {channel.Name}: ");
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
-                    await console.Output.WriteLineAsync(error);
+                    await console.Error.WriteLineAsync(error);
             }
 
-            await console.Output.WriteLineAsync();
+            await console.Error.WriteLineAsync();
         }
 
         // Fail the command only if ALL channels failed to export.
-        // Having some of the channels fail to export is expected.
+        // If only some channels failed to export, it's okay.
         if (errors.Count >= channels.Count)
-        {
             throw new CommandException("Export failed.");
-        }
     }
 
     protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Snowflake> channelIds)
