@@ -44,10 +44,13 @@ public partial class SettingsService : SettingsBase
     public override void Save()
     {
         // Clear the token if it's not supposed to be persisted
+        var lastToken = LastToken;
         if (!IsTokenPersisted)
             LastToken = null;
 
         base.Save();
+
+        LastToken = lastToken;
     }
 }
 

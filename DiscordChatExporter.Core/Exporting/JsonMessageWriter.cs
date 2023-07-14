@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
@@ -48,6 +49,9 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
         _writer.WriteBoolean("isBot", user.IsBot);
 
+        _writer.WritePropertyName("roles");
+        await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
+
         _writer.WriteString(
             "avatarUrl",
             await Context.ResolveAssetUrlAsync(
@@ -57,6 +61,28 @@ internal class JsonMessageWriter : MessageWriter
         );
 
         _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteRolesAsync(
+        IReadOnlyList<Role> roles,
+        CancellationToken cancellationToken = default)
+    {
+        _writer.WriteStartArray();
+
+        foreach (var role in roles)
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("id", role.Id.ToString());
+            _writer.WriteString("name", role.Name);
+            _writer.WriteString("color", role.Color?.ToHex());
+            _writer.WriteNumber("position", role.Position);
+
+            _writer.WriteEndObject();
+        }
+
+        _writer.WriteEndArray();
         await _writer.FlushAsync(cancellationToken);
     }
 
@@ -215,8 +241,8 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteStartObject("channel");
         _writer.WriteString("id", Context.Request.Channel.Id.ToString());
         _writer.WriteString("type", Context.Request.Channel.Kind.ToString());
-        _writer.WriteString("categoryId", Context.Request.Channel.Category.Id.ToString());
-        _writer.WriteString("category", Context.Request.Channel.Category.Name);
+        _writer.WriteString("categoryId", Context.Request.Channel.ParentId.ToString());
+        _writer.WriteString("category", Context.Request.Channel.ParentName);
         _writer.WriteString("name", Context.Request.Channel.Name);
         _writer.WriteString("topic", Context.Request.Channel.Topic);
 
@@ -235,6 +261,9 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("after", Context.Request.After?.ToDate());
         _writer.WriteString("before", Context.Request.Before?.ToDate());
         _writer.WriteEndObject();
+
+        // Timestamp
+        _writer.WriteString("exportedAt", System.DateTimeOffset.UtcNow);
 
         // Message array (start)
         _writer.WriteStartArray("messages");

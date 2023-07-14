@@ -38,8 +38,6 @@ public class DashboardViewModel : PropertyChangedBase
 
     public string? Token { get; set; }
 
-    public bool IsTokenSet => !string.IsNullOrWhiteSpace(Token);
-
     private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? ChannelsByGuild { get; set; }
 
     public IReadOnlyList<Guild>? AvailableGuilds => ChannelsByGuild?.Keys.ToArray();
@@ -67,8 +65,15 @@ public class DashboardViewModel : PropertyChangedBase
 
         _progressMuxer = Progress.CreateMuxer().WithAutoReset();
 
-        this.Bind(o => o.IsBusy, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
-        Progress.Bind(o => o.Current, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
+        this.Bind(
+            o => o.IsBusy,
+            (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate)
+        );
+
+        Progress.Bind(
+            o => o.Current,
+            (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate)
+        );
     }
 
     public void OnViewLoaded()

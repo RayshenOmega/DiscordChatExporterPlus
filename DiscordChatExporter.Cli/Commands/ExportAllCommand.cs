@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Text.Json;
@@ -27,6 +28,12 @@ public class ExportAllCommand : ExportCommandBase
         Description = "Include guild channels."
     )]
     public bool IncludeGuildChannels { get; init; } = true;
+
+    [CommandOption(
+        "include-vc",
+        Description = "Include voice channels."
+    )]
+    public bool IncludeVoiceChannels { get; init; } = true;
 
     [CommandOption(
         "data-package",
@@ -97,6 +104,8 @@ public class ExportAllCommand : ExportCommandBase
             channels.RemoveAll(c => c.Kind.IsDirect());
         if (!IncludeGuildChannels)
             channels.RemoveAll(c => c.Kind.IsGuild());
+        if (!IncludeVoiceChannels)
+            channels.RemoveAll(c => c.Kind.IsVoice());
 
         await base.ExecuteAsync(console, channels);
     }
