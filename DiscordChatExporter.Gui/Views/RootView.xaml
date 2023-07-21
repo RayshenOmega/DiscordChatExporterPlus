@@ -13,7 +13,7 @@
     MinWidth="325"
     d:DataContext="{d:DesignInstance Type=viewModels:RootViewModel}"
     Background="{DynamicResource MaterialDesignPaper}"
-    Icon="/DiscordChatExporter;component/favicon.ico"
+    Icon="/DiscordChatExporterPlus;component/favicon.ico"
     Style="{DynamicResource MaterialDesignRoot}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

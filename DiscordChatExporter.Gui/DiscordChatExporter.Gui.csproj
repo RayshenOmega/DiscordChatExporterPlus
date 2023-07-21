@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>$(TargetFramework)-windows</TargetFramework>
-    <AssemblyName>DiscordChatExporter</AssemblyName>
+    <AssemblyName>DiscordChatExporterPlus</AssemblyName>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
     <DebugType>embedded</DebugType>
