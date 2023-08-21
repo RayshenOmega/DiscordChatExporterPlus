@@ -295,6 +295,4 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         await ExportAsync(console, channels);
     }
-	
-    public override ValueTask ExecuteAsync(IConsole console) => default;
 }
