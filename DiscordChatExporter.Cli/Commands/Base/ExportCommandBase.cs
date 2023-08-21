@@ -93,13 +93,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
         "media",
         Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
-    public bool ShouldDownloadAssets { get; init; }
+    public bool ShouldDownloadAssets { get; init; } = false;
 
     [CommandOption(
         "reuse-media",
         Description = "Reuse previously downloaded assets to avoid redundant requests."
     )]
-    public bool ShouldReuseAssets { get; init; }
+    public bool ShouldReuseAssets { get; init; } = false;
 
     private readonly string? _assetsDirPath;
 
