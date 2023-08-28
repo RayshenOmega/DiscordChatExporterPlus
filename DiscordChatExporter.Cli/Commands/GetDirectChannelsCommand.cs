@@ -42,7 +42,9 @@ public class GetDirectChannelsCommand : DiscordCommandBase
 
             // Channel category / name
             using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync($"{channel.Category} / {channel.Name}");
+                await console.Output.WriteLineAsync(
+                    $"{channel.ParentNameWithFallback} / {channel.Name}"
+                );
         }
     }
 }

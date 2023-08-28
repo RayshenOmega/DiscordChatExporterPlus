@@ -23,21 +23,26 @@ public partial record Channel(
     // channels without a parent (i.e. mostly DM channels) or channels
     // with an inaccessible parent (i.e. inside private categories) had
     // a fallback category created for them.
-    public string Category => Parent?.Name ?? Kind switch
-    {
-        ChannelKind.GuildCategory => "Category",
-        ChannelKind.GuildTextChat => "Text",
-        ChannelKind.DirectTextChat => "Private",
-        ChannelKind.DirectGroupTextChat => "Group",
-        ChannelKind.GuildPrivateThread => "Private Thread",
-        ChannelKind.GuildPublicThread => "Public Thread",
-        ChannelKind.GuildNews => "News",
-        ChannelKind.GuildNewsThread => "News Thread",
-        _ => "Default"
-    };
+    public string ParentNameWithFallback =>
+        Parent?.Name
+        ?? Kind switch
+        {
+            ChannelKind.GuildCategory => "Category",
+            ChannelKind.GuildTextChat => "Text",
+            ChannelKind.DirectTextChat => "Private",
+            ChannelKind.DirectGroupTextChat => "Group",
+            ChannelKind.GuildPrivateThread => "Private Thread",
+            ChannelKind.GuildPublicThread => "Public Thread",
+            ChannelKind.GuildNews => "News",
+            ChannelKind.GuildNewsThread => "News Thread",
+            _ => "Default"
+        };
 
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsVoice => Kind.IsVoice();
+
+    // Only needed for WPF data binding. Don't use anywhere else.
+    public bool IsThread => Kind.IsThread();
 }
 
 public partial record Channel

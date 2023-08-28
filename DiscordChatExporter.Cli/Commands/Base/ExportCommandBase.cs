@@ -170,56 +170,61 @@ public abstract class ExportCommandBase : DiscordCommandBase
         var errorsByChannel = new ConcurrentDictionary<Channel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
-        await console.CreateProgressTicker().StartAsync(async progressContext =>
-        {
-            await Parallel.ForEachAsync(
-                channels,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
-                    CancellationToken = cancellationToken
-                },
-                async (channel, innerCancellationToken) =>
-                {
-                    try
+        await console
+            .CreateProgressTicker()
+            .StartAsync(async progressContext =>
+            {
+                await Parallel.ForEachAsync(
+                    channels,
+                    new ParallelOptions
                     {
-                        await progressContext.StartTaskAsync(
-                            $"{channel.Category} / {channel.Name}",
-                            async progress =>
-                            {
-                                var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);
-
-                                var request = new ExportRequest(
-                                    guild,
-                                    channel,
-                                    OutputPath,
-                                    AssetsDirPath,
-                                    ExportFormat,
-                                    After,
-                                    Before,
-                                    PartitionLimit,
-                                    MessageFilter,
-                                    ShouldFormatMarkdown,
-                                    ShouldDownloadAssets,
-                                    ShouldReuseAssets,
-                                    DateFormat
-                                );
-
-                                await Exporter.ExportChannelAsync(
-                                    request,
-                                    progress.ToPercentageBased(),
-                                    innerCancellationToken
-                                );
-                            }
-                        );
-                    }
-                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                        MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
+                        CancellationToken = cancellationToken
+                    },
+                    async (channel, innerCancellationToken) =>
                     {
-                        errorsByChannel[channel] = ex.Message;
+                        try
+                        {
+                            await progressContext.StartTaskAsync(
+                                $"{channel.ParentNameWithFallback} / {channel.Name}",
+                                async progress =>
+                                {
+                                    var guild = await Discord.GetGuildAsync(
+                                        channel.GuildId,
+                                        innerCancellationToken
+                                    );
+
+                                    var request = new ExportRequest(
+                                        guild,
+                                        channel,
+                                        OutputPath,
+                                        AssetsDirPath,
+                                        ExportFormat,
+                                        After,
+                                        Before,
+                                        PartitionLimit,
+                                        MessageFilter,
+                                        ShouldFormatMarkdown,
+                                        ShouldDownloadAssets,
+                                        ShouldReuseAssets,
+                                        DateFormat
+                                    );
+
+                                    await Exporter.ExportChannelAsync(
+                                        request,
+                                        progress.ToPercentageBased(),
+                                        innerCancellationToken
+                                    );
+                                }
+                            );
+                        }
+                        catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                        {
+                            errorsByChannel[channel] = ex.Message;
+                        }
                     }
-                }
-            );
-        });
+                );
+            });
 
         // Print the result
         using (console.WithForegroundColor(ConsoleColor.White))
@@ -243,7 +248,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             foreach (var (channel, error) in errorsByChannel)
             {
-                await console.Error.WriteAsync($"{channel.Category} / {channel.Name}: ");
+                await console.Error.WriteAsync(
+                    $"{channel.ParentNameWithFallback} / {channel.Name}: "
+                );
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
                     await console.Error.WriteLineAsync(error);

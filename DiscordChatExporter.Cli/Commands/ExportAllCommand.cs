@@ -6,6 +6,8 @@ using CliFx.Attributes;
 using CliFx.Exceptions;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
+using DiscordChatExporter.Cli.Commands.Converters;
+using DiscordChatExporter.Cli.Commands.Shared;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
@@ -36,15 +38,14 @@ public class ExportAllCommand : ExportCommandBase
 
     [CommandOption(
         "include-threads",
-        Description = "Include threads."
+        Description = "Specifies which types of threads should be included.",
+        Converter = typeof(ThreadInclusionBindingConverter)
     )]
-    public bool IncludeThreads { get; init; } = false;
+    public ThreadInclusion ThreadInclusion { get; init; } = ThreadInclusion.None;
 
-    [CommandOption(
-        "include-archived-threads",
-        Description = "Include archived threads."
-    )]
-    public bool IncludeArchivedThreads { get; init; } = false;
+    private bool IncludeThreads => ThreadInclusion != ThreadInclusion.None;
+
+    private bool IncludeArchivedThreads => ThreadInclusion.HasFlag(ThreadInclusion.Archived);
 
     [CommandOption(
         "data-package",
@@ -57,14 +58,6 @@ public class ExportAllCommand : ExportCommandBase
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);
-
-        // Cannot include archived threads without including active threads as well
-        if (IncludeArchivedThreads && !IncludeThreads)
-        {
-            throw new CommandException(
-                "Option --include-archived-threads can only be used when --include-threads is also specified."
-            );
-        }
 
         var cancellationToken = console.RegisterCancellationHandler();
         var channels = new List<Channel>();
