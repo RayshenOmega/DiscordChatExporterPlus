@@ -8,6 +8,7 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
@@ -172,11 +173,14 @@ public class DashboardViewModel : PropertyChangedBase
             }
 
             // Threads
-            if (_settingsService.ShouldShowThreads)
+            if (_settingsService.ThreadInclusion != ThreadInclusion.None)
             {
-                await foreach (var thread in _discord.GetGuildThreadsAsync(
-                                   SelectedGuild.Id,
-                                   _settingsService.ShouldShowArchivedThreads))
+                await foreach (
+                    var thread in _discord.GetGuildThreadsAsync(
+                        SelectedGuild.Id,
+                        _settingsService.ThreadInclusion == ThreadInclusion.All
+                    )
+                )
                 {
                     channels.Add(thread);
                 }
