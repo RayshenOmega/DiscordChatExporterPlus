@@ -17,6 +17,7 @@ using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
+using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
@@ -151,11 +152,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/917
         var isValidOutputPath =
             // Anything is valid when exporting a single channel
-            channels.Count <= 1 ||
+            channels.Count <= 1
             // When using template tokens, assume the user knows what they're doing
-            OutputPath.Contains('%') ||
+            || OutputPath.Contains('%')
             // Otherwise, require an existing directory or an unambiguous directory path
-            Directory.Exists(OutputPath) || PathEx.IsDirectoryPath(OutputPath);
+            || Directory.Exists(OutputPath)
+            || PathEx.IsDirectoryPath(OutputPath);
 
         if (!isValidOutputPath)
         {
@@ -172,6 +174,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console
             .CreateProgressTicker()
+            .HideCompleted(
+                // When exporting multiple channels in parallel, hide the completed tasks
+                // because it gets hard to visually parse them as they complete out of order.
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/1124
+                ParallelLimit > 1
+            )
             .StartAsync(async progressContext =>
             {
                 await Parallel.ForEachAsync(

@@ -39,9 +39,9 @@ public class ExportAllCommand : ExportCommandBase
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionBindingConverter)
+        Converter = typeof(ThreadInclusionModeBindingConverter)
     )]
-    public ThreadInclusion ThreadInclusion { get; init; } = ThreadInclusion.None;
+    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
 
     [CommandOption(
         "data-package",
@@ -78,9 +78,15 @@ public class ExportAllCommand : ExportCommandBase
                 }
 
                 // Threads
-                if (ThreadInclusion != ThreadInclusion.None)
+                if (ThreadInclusionMode != ThreadInclusionMode.None)
                 {
-                    await foreach (var thread in Discord.GetGuildThreadsAsync(guild.Id, IncludeArchivedThreads, cancellationToken))
+                    await foreach (
+                        var thread in Discord.GetGuildThreadsAsync(
+                            guild.Id,
+                            ThreadInclusionMode == ThreadInclusionMode.All,
+                            cancellationToken
+                        )
+                    )
                     {
                         channels.Add(thread);
                     }
@@ -130,9 +136,9 @@ public class ExportAllCommand : ExportCommandBase
             channels.RemoveAll(c => c.Kind.IsGuild());
         if (!IncludeVoiceChannels)
             channels.RemoveAll(c => c.Kind.IsVoice());
-        if (ThreadInclusion == ThreadInclusion.None)
+        if (ThreadInclusionMode == ThreadInclusionMode.None)
             channels.RemoveAll(c => c.Kind.IsThread());
-        if (ThreadInclusion != ThreadInclusion.All)
+        if (ThreadInclusionMode != ThreadInclusionMode.All)
             channels.RemoveAll(c => c.Kind.IsThread() && c.IsArchived);
 
         await ExportAsync(console, channels);
