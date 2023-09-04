@@ -53,12 +53,19 @@ public class GetChannelsCommand : DiscordCommandBase
             .OrderDescending()
             .FirstOrDefault();
 
-        var threads = ThreadInclusionMode != ThreadInclusionMode.None
-				? (await Discord.GetGuildThreadsAsync(
-					GuildId,
-					ThreadInclusionMode == ThreadInclusionMode.All,
-					cancellationToken
-				)).OrderBy(c => c.Name).ToArray()
+        var threads =
+            ThreadInclusionMode != ThreadInclusionMode.None
+                ? (
+                    await Discord.GetGuildThreadsAsync(
+                        GuildId,
+                        ThreadInclusionMode == ThreadInclusionMode.All,
+                        null,
+                        null,
+                        cancellationToken
+                    )
+                )
+                    .OrderBy(c => c.Name)
+                    .ToArray()
                 : Array.Empty<Channel>();
 
         foreach (var channel in channels)

@@ -38,11 +38,17 @@ public partial record Channel(
             _ => "Default"
         };
 
+    public bool IsEmpty => LastMessageId is null;
+
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsVoice => Kind.IsVoice();
 
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsThread => Kind.IsThread();
+
+    public bool MayHaveMessagesAfter(Snowflake messageId) => !IsEmpty && messageId < LastMessageId;
+
+    public bool MayHaveMessagesBefore(Snowflake messageId) => !IsEmpty && messageId > Id;
 }
 
 public partial record Channel
@@ -58,17 +64,15 @@ public partial record Channel
 
         var name =
             // Guild channel
-            json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull() ??
-
+            json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull()
             // DM channel
-            json.GetPropertyOrNull("recipients")?
-                .EnumerateArrayOrNull()?
-                .Select(User.Parse)
+            ?? json.GetPropertyOrNull("recipients")
+                ?.EnumerateArrayOrNull()
+                ?.Select(User.Parse)
                 .Select(u => u.DisplayName)
-                .Pipe(s => string.Join(", ", s)) ??
-
+                .Pipe(s => string.Join(", ", s))
             // Fallback
-            id.ToString();
+            ?? id.ToString();
 
         var position =
             positionHint ??
