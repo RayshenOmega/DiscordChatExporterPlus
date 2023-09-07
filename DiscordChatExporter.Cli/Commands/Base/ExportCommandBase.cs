@@ -208,7 +208,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                         try
                         {
                             await progressContext.StartTaskAsync(
-                                $"{channel.ParentNameWithFallback} / {channel.Name}",
+                                channel.GetHierarchicalName(),
                                 async progress =>
                                 {
                                     var guild = await Discord.GetGuildAsync(
@@ -271,10 +271,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             foreach (var (channel, error) in errorsByChannel)
             {
-                await console.Error.WriteAsync(
-                    $"{channel.ParentNameWithFallback} / {channel.Name}: "
-                );
-
+                await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
                 using (console.WithForegroundColor(ConsoleColor.Red))
                     await console.Error.WriteLineAsync(error);
             }
@@ -302,7 +299,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             var channel = await Discord.GetChannelAsync(channelId, cancellationToken);
 
             // Unwrap categories
-            if (channel.Kind == ChannelKind.GuildCategory)
+            if (channel.IsCategory)
             {
                 var guildChannels =
                     channelsByGuild.GetValueOrDefault(channel.GuildId) ??
