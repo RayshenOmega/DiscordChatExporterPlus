@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using DiscordChatExporter.Core.Utils.Extensions;
 
@@ -21,7 +22,7 @@ public static class ImageCdn
 
         var twemojiId = string.Join(
             "-",
-            filteredRunes.Select(r => r.Value.ToString("x"))
+            filteredRunes.Select(r => r.Value.ToString("x", CultureInfo.InvariantCulture))
         );
 
         return $"https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/{twemojiId}.svg";

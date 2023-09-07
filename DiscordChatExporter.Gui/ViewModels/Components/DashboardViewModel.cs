@@ -80,6 +80,11 @@ public class DashboardViewModel : PropertyChangedBase
                 // due to the channels being asynchronously loaded.
                 AvailableChannels = null;
                 SelectedChannels = null;
+
+                // Pull channels for the selected guild
+                // (ideally this should be called inside `PullGuilds()`,
+                // but Stylet doesn't support async commands)
+                PullChannels();
             }
         );
     }
@@ -90,14 +95,14 @@ public class DashboardViewModel : PropertyChangedBase
             Token = _settingsService.LastToken;
     }
 
-    public async ValueTask ShowSettingsAsync() =>
+    public async void ShowSettings() =>
         await _dialogManager.ShowDialogAsync(_viewModelFactory.CreateSettingsViewModel());
 
     public void ShowHelp() => ProcessEx.StartShellExecute(App.DocumentationUrl);
 
-    public bool CanPullGuildsAsync => !IsBusy && !string.IsNullOrWhiteSpace(Token);
+    public bool CanPullGuilds => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    public async ValueTask PullGuildsAsync()
+    public async void PullGuilds()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -120,9 +125,6 @@ public class DashboardViewModel : PropertyChangedBase
 
             AvailableGuilds = guilds;
             SelectedGuild = guilds.FirstOrDefault();
-
-            // Pull channels for the selected guild
-            await PullChannelsAsync();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {
@@ -146,9 +148,9 @@ public class DashboardViewModel : PropertyChangedBase
         }
     }
 
-    public bool CanPullChannelsAsync => !IsBusy && _discord is not null && SelectedGuild is not null;
+    public bool CanPullChannels => !IsBusy && _discord is not null && SelectedGuild is not null;
 
-    public async ValueTask PullChannelsAsync()
+    public async void PullChannels()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -211,13 +213,13 @@ public class DashboardViewModel : PropertyChangedBase
         }
     }
 
-    public bool CanExportAsync =>
-        !IsBusy &&
-        _discord is not null &&
-        SelectedGuild is not null &&
-        SelectedChannels?.Any() is true;
+    public bool CanExport =>
+        !IsBusy
+        && _discord is not null
+        && SelectedGuild is not null
+        && SelectedChannels?.Any() is true;
 
-    public async ValueTask ExportAsync()
+    public async void Export()
     {
         IsBusy = true;
 
@@ -266,7 +268,8 @@ public class DashboardViewModel : PropertyChangedBase
                             dialog.ShouldFormatMarkdown,
                             dialog.ShouldDownloadAssets,
                             dialog.ShouldReuseAssets,
-                            _settingsService.DateFormat
+                            _settingsService.Locale,
+                            _settingsService.IsUtcNormalizationEnabled
                         );
 
                         await exporter.ExportChannelAsync(request, progress, cancellationToken);

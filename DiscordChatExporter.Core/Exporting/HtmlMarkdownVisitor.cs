@@ -297,12 +297,12 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         CancellationToken cancellationToken = default)
     {
         var formatted = timestamp.Instant is not null
-            ? !string.IsNullOrWhiteSpace(timestamp.Format)
-                ? timestamp.Instant.Value.ToLocalString(timestamp.Format)
-                : _context.FormatDate(timestamp.Instant.Value)
+            ? _context.FormatDate(timestamp.Instant.Value, timestamp.Format ?? "g")
             : "Invalid date";
 
-        var formattedLong = timestamp.Instant?.ToLocalString("dddd, MMMM d, yyyy h:mm tt") ?? "";
+        var formattedLong = timestamp.Instant is not null
+            ? _context.FormatDate(timestamp.Instant.Value, "f")
+            : "";
 
         _buffer.Append(
             // lang=html
