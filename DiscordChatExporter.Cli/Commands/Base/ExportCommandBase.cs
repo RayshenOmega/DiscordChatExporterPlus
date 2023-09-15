@@ -132,12 +132,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
     public bool IsUtcNormalizationEnabled { get; init; } = false;
 
-    [CommandOption(
-        "dateformat",
-        Description = "Format used when writing dates."
-    )]
-    public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
-
     private ChannelExporter? _channelExporter;
     protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
