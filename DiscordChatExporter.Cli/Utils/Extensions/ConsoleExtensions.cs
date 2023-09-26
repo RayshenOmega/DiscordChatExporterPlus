@@ -32,10 +32,14 @@ internal static class ConsoleExtensions
         string description,
         Func<ProgressTask, ValueTask> performOperationAsync)
     {
+        // Description cannot be empty
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1133
+        var actualDescription = !string.IsNullOrWhiteSpace(description) ? description : "?";
+
         var progressTask = progressContext.AddTask(
             // Don't recognize random square brackets as style tags
-            Markup.Escape(description),
-            new ProgressTaskSettings {MaxValue = 1}
+            Markup.Escape(actualDescription),
+            new ProgressTaskSettings { MaxValue = 1 }
         );
 
         try
