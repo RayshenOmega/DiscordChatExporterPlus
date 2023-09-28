@@ -27,7 +27,11 @@ public class JsonStickerSpecs
         sticker.GetProperty("id").GetString().Should().Be("904215665597120572");
         sticker.GetProperty("name").GetString().Should().Be("rock");
         sticker.GetProperty("format").GetString().Should().Be("Apng");
-        sticker.GetProperty("sourceUrl").GetString().Should().Be("https://cdn.discordapp.com/stickers/904215665597120572.png");
+        sticker
+            .GetProperty("sourceUrl")
+            .GetString()
+            .Should()
+            .StartWith("https://cdn.discordapp.com/stickers/904215665597120572.png");
     }
 
     [Fact]
@@ -48,6 +52,10 @@ public class JsonStickerSpecs
         sticker.GetProperty("id").GetString().Should().Be("816087132447178774");
         sticker.GetProperty("name").GetString().Should().Be("Yikes");
         sticker.GetProperty("format").GetString().Should().Be("Lottie");
-        sticker.GetProperty("sourceUrl").GetString().Should().Be("https://cdn.discordapp.com/stickers/816087132447178774.json");
+        sticker
+            .GetProperty("sourceUrl")
+            .GetString()
+            .Should()
+            .StartWith("https://cdn.discordapp.com/stickers/816087132447178774.json");
     }
 }

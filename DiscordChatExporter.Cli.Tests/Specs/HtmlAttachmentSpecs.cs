@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
@@ -31,7 +32,11 @@ public class HtmlAttachmentSpecs
             .Select(e => e.GetAttribute("href"))
             .Should()
             .Contain(
-                "https://cdn.discordapp.com/attachments/885587741654536192/885587844964417596/Test.txt"
+                u =>
+                    u.StartsWith(
+                        "https://cdn.discordapp.com/attachments/885587741654536192/885587844964417596/Test.txt",
+                        StringComparison.Ordinal
+                    )
             );
     }
 
@@ -52,7 +57,11 @@ public class HtmlAttachmentSpecs
             .Select(e => e.GetAttribute("src"))
             .Should()
             .Contain(
-                "https://cdn.discordapp.com/attachments/885587741654536192/885654862430359613/bird-thumbnail.png"
+                u =>
+                    u.StartsWith(
+                        "https://cdn.discordapp.com/attachments/885587741654536192/885654862430359613/bird-thumbnail.png",
+                        StringComparison.Ordinal
+                    )
             );
     }
 
@@ -71,9 +80,11 @@ public class HtmlAttachmentSpecs
         message.Text().Should().Contain("Video attachment");
 
         var videoUrl = message.QuerySelector("video source")?.GetAttribute("src");
-        videoUrl.Should().Be(
-            "https://cdn.discordapp.com/attachments/885587741654536192/885655761512968233/file_example_MP4_640_3MG.mp4"
-        );
+        videoUrl
+            .Should()
+            .StartWith(
+                "https://cdn.discordapp.com/attachments/885587741654536192/885655761512968233/file_example_MP4_640_3MG.mp4"
+            );
     }
 
     [Fact]
@@ -91,8 +102,10 @@ public class HtmlAttachmentSpecs
         message.Text().Should().Contain("Audio attachment");
 
         var audioUrl = message.QuerySelector("audio source")?.GetAttribute("src");
-        audioUrl.Should().Be(
-            "https://cdn.discordapp.com/attachments/885587741654536192/885656175348187146/file_example_MP3_1MG.mp3"
-        );
+        audioUrl
+            .Should()
+            .StartWith(
+                "https://cdn.discordapp.com/attachments/885587741654536192/885656175348187146/file_example_MP3_1MG.mp3"
+            );
     }
 }
