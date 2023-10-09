@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using AsyncKeyedLock;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -15,11 +16,12 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal partial class ExportAssetDownloader
 {
-    private static readonly AsyncKeyedLocker<string> Locker = new(o =>
-    {
-        o.PoolSize = 20;
-        o.PoolInitialFill = 1;
-    });
+    private static readonly AsyncKeyedLocker<string> Locker =
+        new(o =>
+        {
+            o.PoolSize = 20;
+            o.PoolInitialFill = 1;
+        });
 
     private readonly string _workingDirPath;
     private readonly bool _reuse;
@@ -33,7 +35,10 @@ internal partial class ExportAssetDownloader
         _reuse = reuse;
     }
 
-    public async ValueTask<string> DownloadAsync(string url, CancellationToken cancellationToken = default)
+    public async ValueTask<string> DownloadAsync(
+        string url,
+        CancellationToken cancellationToken = default
+    )
     {
         var fileName = GetFileNameFromUrl(url);
         var filePath = Path.Combine(_workingDirPath, fileName);
@@ -97,11 +102,31 @@ internal partial class ExportAssetDownloader
 
 internal partial class ExportAssetDownloader
 {
-    private static string GetUrlHash(string url) => SHA256
-        .HashData(Encoding.UTF8.GetBytes(url))
-        .ToHex()
-        // 5 chars ought to be enough for anybody
-        .Truncate(5);
+    // Remove signature parameters from Discord CDN URLs to normalize them
+    private static string StripUrlSignatureParameters(string url)
+    {
+        var uri = new Uri(url);
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+            return url;
+
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        query.Remove("ex");
+        query.Remove("is");
+        query.Remove("hm");
+
+        return uri.GetLeftPart(UriPartial.Path) + query;
+    }
+
+    private static string GetUrlHash(string url)
+    {
+        var normalizedUrl = StripUrlSignatureParameters(url);
+
+        return SHA256
+            .HashData(Encoding.UTF8.GetBytes(normalizedUrl))
+            .ToHex()
+            // 5 chars ought to be enough for anybody
+            .Truncate(5);
+    }
 
     private static string GetFileNameFromUrl(string url)
     {
@@ -126,6 +151,8 @@ internal partial class ExportAssetDownloader
             fileExtension = "";
         }
 
-        return PathEx.EscapeFileName(fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension);
+        return PathEx.EscapeFileName(
+            fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension
+        );
     }
 }
