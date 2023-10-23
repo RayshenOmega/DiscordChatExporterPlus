@@ -16,5 +16,9 @@ dotnet DiscordChatExporter.Cli.dll export -t TOKEN -c CHANNEL
 ```
 
 > [How to get Token and Channel IDs](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Token-and-IDs.md).
+=======
+If the above command throws a "Permission denied" error, execute this command to fix the permissions:
 
+```console
+chmod 644 *.dll DiscordChatExporter.*
 There's much more you can do with DCE.CLI! Read the [CLI explained](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Getting-started.md#dcecli-commands-) page to get started.
