@@ -40,8 +40,7 @@ internal partial class MessageExporter : IAsyncDisposable
     private async ValueTask<MessageWriter> GetWriterAsync(CancellationToken cancellationToken = default)
     {
         // Ensure that the partition limit has not been reached
-        if (_writer is not null &&
-            _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
+        if (_writer is not null && _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
         {
             await ResetWriterAsync(cancellationToken);
             _partitionIndex++;

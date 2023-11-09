@@ -12,8 +12,8 @@ using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
-using DiscordChatExporter.Gui.ViewModels.Messages;
 using DiscordChatExporter.Gui.ViewModels.Framework;
+using DiscordChatExporter.Gui.ViewModels.Messages;
 using Gress;
 using Gress.Completable;
 using Stylet;
@@ -232,11 +232,10 @@ public class DashboardViewModel : PropertyChangedBase
 
             var exporter = new ChannelExporter(_discord);
 
-            var channelProgressPairs = dialog.Channels!.Select(c => new
-            {
-                Channel = c,
-                Progress = _progressMuxer.CreateInput()
-            }).ToArray();
+            var channelProgressPairs = dialog
+                .Channels!
+                .Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
+                .ToArray();
 
             var successfulExportCount = 0;
 

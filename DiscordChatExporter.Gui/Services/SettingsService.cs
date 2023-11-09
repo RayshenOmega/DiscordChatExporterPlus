@@ -66,10 +66,14 @@ public partial class SettingsService
     {
         try
         {
-            return Registry.CurrentUser.OpenSubKey(
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                false
-            )?.GetValue("AppsUseLightTheme") is 0;
+            return Registry
+                .CurrentUser
+                .OpenSubKey(
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                    false
+                )
+                ?.GetValue("AppsUseLightTheme")
+                is 0;
         }
         catch
         {

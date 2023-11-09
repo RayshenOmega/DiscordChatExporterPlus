@@ -246,9 +246,11 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Print the result
         using (console.WithForegroundColor(ConsoleColor.White))
         {
-            await console.Output.WriteLineAsync(
-                $"Successfully exported {channels.Count - errorsByChannel.Count} channel(s)."
-            );
+            await console
+                .Output
+                .WriteLineAsync(
+                    $"Successfully exported {channels.Count - errorsByChannel.Count} channel(s)."
+                );
         }
 
         // Print errors
@@ -258,9 +260,11 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
-                await console.Error.WriteLineAsync(
-                    $"Failed to export {errorsByChannel.Count} the following channel(s):"
-                );
+                await console
+                    .Error
+                    .WriteLineAsync(
+                        $"Failed to export {errorsByChannel.Count} the following channel(s):"
+                    );
             }
 
             foreach (var (channel, error) in errorsByChannel)
