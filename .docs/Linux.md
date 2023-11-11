@@ -2,7 +2,7 @@
 
 ## Installing .NET Runtime
 
-Please follow the [instructions provided here](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Dotnet.md).
+Please follow the [instructions provided here](Dotnet.md).
 
 ## Downloading and using DiscordChatExporter.Cli
 
@@ -22,4 +22,6 @@ If the above command throws a "Permission denied" error, execute this command to
 chmod 644 *.dll DiscordChatExporter.*
 ```
 
-There's much more you can do with DCE.CLI! Read the [CLI explained](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Getting-started.md#dcecli-commands-) page to get started.
+> [How to get Token and Channel IDs](Token-and-IDs.md).
+
+There's much more you can do with DCE.CLI! Read the [CLI explained](Using-the-CLI.md) page to get started.

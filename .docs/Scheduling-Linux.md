@@ -1,10 +1,8 @@
 # Scheduling exports with Cron
 
-Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Linux.md)).
+Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](Linux.md)).
 
-You can use Cron on macOS, but [this method](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/scheduling-MacOS.md) is preferred.
-
----
+## Creating the script
 
 1. Open Terminal and create a new text file with `nano /path/to/DiscordChatExporter/cron.sh`
 
@@ -66,9 +64,9 @@ exit 0
 
 3. Replace:
 
-- `tokenhere` with your [Token](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Token-and-IDs.md).
-- `channelhere` with a [Channel ID](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Token-and-IDs.md).
-- `dceFOLDERpathhere` with DCE's **directory path** (e.g. `/path/to/folder`, NOT `/path/to/folder/DiscordChatExporter.dll`).
+- `tokenhere` with your [Token](Token-and-IDs.md).
+- `channelhere` with a [Channel ID](Token-and-IDs.md).
+- `dceFOLDERpathhere` with DCEp's **directory path** (e.g. `/path/to/folder`, NOT `/path/to/folder/DiscordChatExporter.dll`).
 - `filenamehere` with the exported channel's filename, without spaces.
 - `dirhere` with the export directory (e.g. /home/user/Documents/Discord\ Exports).
 - `formathere` with one of the available export formats.

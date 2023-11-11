@@ -2,15 +2,16 @@
 
 Welcome to the getting started page!
 Here you'll learn how to use every **DiscordChatExporterPlus** (DCE for short) feature.
-For other things you can do with DCE, check out the [Guides](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Readme.md#Guides) section.
+For other things you can do with DCE, check out the [Guides](Readme.md#guides) section.
 
-If you still have unanswered questions after reading this page or if you have encountered a problem, please visit our [FAQ & Troubleshooting](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Troubleshooting.md) section.
+If you still have unanswered questions after reading this page or if you have encountered a problem, please visit our [FAQ & Troubleshooting](Troubleshooting.md) section.
 
 The information presented on this page is valid for **all** platforms.
 
 ## GUI or CLI?
 
 ![GUI vs CLI](https://i.imgur.com/j9OTxRB.png)
+
 **DCEp** has two different versions:
 
 - **Graphical User Interface** (**GUI**) - it's the preferred version for newcomers as it is easy to use.
@@ -18,13 +19,13 @@ The information presented on this page is valid for **all** platforms.
 - **Command-Line Interface** (**CLI**) - offers greater flexibility and more features for advanced users, such as export scheduling, ID lists, and more specific date ranges.
   You can get it by [downloading](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) the `DiscordChatExporterPlus.CLI.zip` file.
 
-If you're not comfortable with **Windows'** Command Line (cmd), please choose the GUI.
-[**macOS**](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/MacOS.md), [**Linux**](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Linux.md) users can only use the CLI version.
+If you're not comfortable with **Windows'** Command-line (cmd), please choose the GUI.
+[**macOS**](MacOS.md), [**Linux**](Linux.md) and [**Docker**](Docker.md) users can only use the CLI version.
 
 There are dedicated guides for each version:
 
-- [Using the GUI](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Using-the-GUI.md)
-- [Using the CLI](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Using-the-CLI.md)
+- [Using the GUI](Using-the-GUI.md)
+- [Using the CLI](Using-the-CLI.md)
 
 ## File formats
 

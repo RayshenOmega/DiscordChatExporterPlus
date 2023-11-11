@@ -2,6 +2,8 @@
 
 We'll be using [DiscordChatExporter CLI](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest), PowerShell, and Task Scheduler.
 
+## Creating the script
+
 1. Open a text editor such as Notepad and paste:
 
 ```powershell
@@ -31,8 +33,8 @@ exit
 
 2. Replace:
 
-- `tokenhere` with your [Token](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Token-and-IDs.md)
-- `channelhere` with a [Channel ID](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/.docs/Token-and-IDs.md)
+- `tokenhere` with your [Token](Token-and-IDs.md)
+- `channelhere` with a [Channel ID](Token-and-IDs.md)
 - `exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporter)
 - `filenamehere` with a filename without spaces
 - `dirhere` with the export directory (e.g. C:\Users\User\Documents\Exports)
