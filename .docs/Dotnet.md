@@ -1,6 +1,6 @@
 # Install .NET runtime
 
-**.NET v7.0 Runtime** is required by **DiscordChatExporterPlus v2.37 and newer**.
+**.NET 8.0 Runtime** is required by **DiscordChatExporterPlus**.
 
 If you are using GUI flavor of DiscordChatExporterPlus, the runtime will be installed automatically (since v2.27.1).
 
@@ -10,9 +10,9 @@ Both the GUI and the CLI flavors of **DiscordChatExporterPlus** for Windows come
 
 If, for some reason, you need to install the runtime manually, use one of the download links below:
 
-- [.NET v7.0 Runtime for **Windows x64**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-7.0.13-windows-x64-installer)
-- [.NET v7.0 Runtime for **Windows x86**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-7.0.13-windows-x86-installer)
-- [.NET v7.0 Runtime for **Windows arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-7.0.13-windows-arm64-installer)
+- [.NET 8.0 Runtime for **Windows x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-windows-x86-installer)
+- [.NET 8.0 Runtime for **Windows x86**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-windows-x64-installer)
+- [.NET 8.0 Runtime for **Windows arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-windows-arm64-installer)
 
 > **Note**:
 > [How can I tell if my computer is running a 32-bit (x86) or a 64-bit (x64) version of Windows?](https://support.microsoft.com/help/15056/windows-32-64-bit-faq)
@@ -21,11 +21,11 @@ If, for some reason, you need to install the runtime manually, use one of the do
 
 Use one of the download links below:
 
-- [.NET v7.0 Runtime for **Macs with Apple silicon**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-7.0.13-macos-arm64-installer)
-- [.NET v7.0 Runtime for **Macs with an Intel processor**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-7.0.13-macos-x64-installer)
+- [.NET 8.0 Runtime for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-x64-installer)
+- [.NET 8.0 Runtime for **macOS arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-arm64-installer)
 
 > **Note**:
-> [Is my Mac using an Intel processor or Apple silicon?](https://support.apple.com/HT211814)
+> [Is my Mac using an Intel processor (x64) or Apple Silicon (arm64)?](https://support.apple.com/HT211814)
 
 ## Linux
 

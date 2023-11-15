@@ -26,7 +26,7 @@ public static class PathEx
 
         return buffer.ToString();
     }
-
+	
     public static bool IsDirectoryPath(string path) =>
         path.EndsWith(Path.DirectorySeparatorChar) ||
         path.EndsWith(Path.AltDirectorySeparatorChar);
