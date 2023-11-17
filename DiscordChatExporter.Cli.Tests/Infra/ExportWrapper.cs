@@ -106,7 +106,7 @@ public static class ExportWrapper
         if (message is null)
         {
             throw new InvalidOperationException(
-                $"Message #{messageId} does not exist in the export of channel #{channelId}."
+                $"Message #{messageId} not found in the export of channel #{channelId}."
             );
         }
 
@@ -126,7 +126,7 @@ public static class ExportWrapper
         if (message.ValueKind == JsonValueKind.Undefined)
         {
             throw new InvalidOperationException(
-                $"Message #{messageId} does not exist in the export of channel #{channelId}."
+                $"Message #{messageId} not found in the export of channel #{channelId}."
             );
         }
 
