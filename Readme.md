@@ -1,6 +1,6 @@
 # DiscordChatExporterPlus
 
-This is a fork of **DiscordChatExporter** with the political cancer, popups, "sanctions", discrimination against Russian people, etc removed.
+This is a fork of **DiscordChatExporter** with the political cancer, popups & notices, protestware "sanctions", general discrimination against Russian people, etc removed.
 
 This fork acts as a drop-in replacement for DiscordChatExporter, and is set to update from this fork instead of upstream. Upstream is treated with minimal trust, therefore commits from upstream and the dependencies owned by Tyrrrz are reviewed to avoid supply-chain attacks and insertion of political bloat.
 
