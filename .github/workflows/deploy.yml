@@ -17,15 +17,23 @@ jobs:
         uses: actions/checkout@v4.1.0
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2
         with:
           dotnet-version: 8.0.x
 
       - name: Publish (CLI)
-        run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
+        run: >
+            dotnet publish DiscordChatExporter.Cli/
+            -p:Version=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
+            --output DiscordChatExporter.Cli/bin/Publish/
+            --configuration Release
 
       - name: Publish (GUI)
-        run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
+        run: >
+            dotnet publish DiscordChatExporter.Gui/
+            -p:Version=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
+            -o DiscordChatExporter.Gui/bin/Publish/
+            --configuration Release
 
       - name: Create package (CLI)
         run: Compress-Archive -Path DiscordChatExporter.Cli/bin/Publish/* -DestinationPath DiscordChatExporterPlus.Cli.zip -Force
@@ -43,5 +51,3 @@ jobs:
           files: |
             DiscordChatExporterPlus.Cli.zip
             DiscordChatExporterPlus.zip
-          body: |
-            [Changelog](https://github.com/nulldg/DiscordChatExporterPlus/blob/master/Changelog.md)

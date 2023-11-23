@@ -94,7 +94,7 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         {
             Notifications.Enqueue(
                 $"Successfully updated to {App.Name} v{App.VersionString}",
-                "CHANGELOG", () => ProcessEx.StartShellExecute(App.ChangelogUrl)
+                "WHAT'S NEW", () => ProcessEx.StartShellExecute(App.LatestReleaseUrl)
             );
 
             _settingsService.LastAppVersion = App.Version;

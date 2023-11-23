@@ -17,9 +17,9 @@ public partial class App
 
     public const string ProjectUrl = "https://github.com/nulldg/DiscordChatExporterPlus";
 
-    public const string ChangelogUrl = ProjectUrl + "/blob/master/Changelog.md";
+    public static string LatestReleaseUrl { get; } = ProjectUrl + "/releases/latest";
 
-    public const string DocumentationUrl = ProjectUrl + "/blob/master/.docs";
+    public static string DocumentationUrl { get; } = ProjectUrl + "/tree/master/.docs";
 }
 
 public partial class App
