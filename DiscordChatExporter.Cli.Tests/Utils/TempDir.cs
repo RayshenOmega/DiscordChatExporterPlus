@@ -5,12 +5,9 @@ using PathEx = System.IO.Path;
 
 namespace DiscordChatExporter.Cli.Tests.Utils;
 
-internal partial class TempDir : IDisposable
+internal partial class TempDir(string path) : IDisposable
 {
-    public string Path { get; }
-
-    public TempDir(string path) =>
-        Path = path;
+    public string Path { get; } = path;
 
     public void Dispose()
     {
@@ -18,9 +15,7 @@ internal partial class TempDir : IDisposable
         {
             Directory.Delete(Path, true);
         }
-        catch (DirectoryNotFoundException)
-        {
-        }
+        catch (DirectoryNotFoundException) { }
     }
 }
 
@@ -29,7 +24,8 @@ internal partial class TempDir
     public static TempDir Create()
     {
         var dirPath = PathEx.Combine(
-            PathEx.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
+            PathEx.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                ?? Directory.GetCurrentDirectory(),
             "Temp",
             Guid.NewGuid().ToString()
         );
