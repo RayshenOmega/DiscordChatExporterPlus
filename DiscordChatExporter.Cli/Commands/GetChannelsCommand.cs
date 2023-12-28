@@ -12,14 +12,10 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("channels", Description = "Get the list of channels in a guild.")]
+[Command("channels", Description = "Get the list of channels in a server.")]
 public class GetChannelsCommand : DiscordCommandBase
 {
-    [CommandOption(
-        "guild",
-        'g',
-        Description = "Guild ID."
-    )]
+    [CommandOption("guild", 'g', Description = "Server ID.")]
     public required Snowflake GuildId { get; init; }
 
     [CommandOption(
@@ -71,9 +67,9 @@ public class GetChannelsCommand : DiscordCommandBase
         foreach (var channel in channels)
         {
             // Channel ID
-            await console
-                .Output
-                .WriteAsync(channel.Id.ToString().PadRight(channelIdMaxLength, ' '));
+            await console.Output.WriteAsync(
+                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
+            );
 
             // Separator
             using (console.WithForegroundColor(ConsoleColor.DarkGray))
@@ -95,11 +91,9 @@ public class GetChannelsCommand : DiscordCommandBase
                 await console.Output.WriteAsync(" * ");
 
                 // Thread ID
-                await console
-                    .Output
-                    .WriteAsync(
-                        channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
-                    );
+                await console.Output.WriteAsync(
+                    channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
+                );
 
                 // Separator
                 using (console.WithForegroundColor(ConsoleColor.DarkGray))
@@ -115,9 +109,9 @@ public class GetChannelsCommand : DiscordCommandBase
 
                 // Thread status
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console
-                        .Output
-                        .WriteLineAsync(channelThread.IsArchived ? "Archived" : "Active");
+                    await console.Output.WriteLineAsync(
+                        channelThread.IsArchived ? "Archived" : "Active"
+                    );
             }
         }
     }

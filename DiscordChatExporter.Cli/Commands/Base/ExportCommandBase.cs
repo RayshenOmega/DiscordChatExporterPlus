@@ -28,11 +28,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption(
         "output",
         'o',
-        Description =
-            "Output file or directory path. " +
-            "Directory path must end with a slash to avoid ambiguity. " +
-            "If a directory is specified, file names will be generated automatically. " +
-            "Supports template tokens, see the documentation for more info."
+        Description = "Output file or directory path. "
+            + "If a directory is specified, file names will be generated automatically based on the channel names and export parameters. "
+            + "Directory paths must end with a slash to avoid ambiguity. "
+            + "Supports template tokens, see the documentation for more info."
     )]
     public string OutputPath
     {
@@ -246,11 +245,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Print the result
         using (console.WithForegroundColor(ConsoleColor.White))
         {
-            await console
-                .Output
-                .WriteLineAsync(
-                    $"Successfully exported {channels.Count - errorsByChannel.Count} channel(s)."
-                );
+            await console.Output.WriteLineAsync(
+                $"Successfully exported {channels.Count - errorsByChannel.Count} channel(s)."
+            );
         }
 
         // Print errors
@@ -260,11 +257,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
-                await console
-                    .Error
-                    .WriteLineAsync(
-                        $"Failed to export {errorsByChannel.Count} the following channel(s):"
-                    );
+                await console.Error.WriteLineAsync(
+                    $"Failed to export {errorsByChannel.Count} the following channel(s):"
+                );
             }
 
             foreach (var (channel, error) in errorsByChannel)
