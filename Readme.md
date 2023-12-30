@@ -23,18 +23,19 @@ To install this fork, download the [latest release](https://github.com/nulldg/Di
 If you already have a copy of DiscordChatExporter and wish to switch to this fork, you can simply overwrite the existing files. Your settings will be preserved.
 
 > **Warning**:
-> To run **DiscordChatExporterPlus** on macOS and Linux, you need to make sure that **.NET 8.0 Runtime** is installed.
+> To run **DiscordChatExporterPlus** on macOS and Linux, you need to make sure that the **.NET 8.0 Runtime** is installed.
 > You can download it here:
 >
 > - [.NET 8.0 Runtime for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-x64-installer)
 > - [.NET 8.0 Runtime for **macOS arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-arm64-installer)
 > - [.NET 8.0 Runtime for **Linux**](https://learn.microsoft.com/dotnet/core/install/linux) (find the correct download for your distro)
+> - On Windows, the runtime should be installed automatically when you run the application for the first time.
 
 ## Features
 
 - Graphical user interface (Windows)
 - Command-line interface (Windows, Linux, macOS)
-- Authentication via both user and bot tokens
+- Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features
 - File partitioning, date ranges, message filtering, and other export options
