@@ -25,7 +25,7 @@ public class FilterSpecs
         await new ExportChannelsCommand
         {
             Token = Secrets.DiscordToken,
-            ChannelIds = new[] { ChannelIds.FilterTestCases },
+            ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("some text")
@@ -51,7 +51,7 @@ public class FilterSpecs
         await new ExportChannelsCommand
         {
             Token = Secrets.DiscordToken,
-            ChannelIds = new[] { ChannelIds.FilterTestCases },
+            ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("from:Tyrrrz")
@@ -77,7 +77,7 @@ public class FilterSpecs
         await new ExportChannelsCommand
         {
             Token = Secrets.DiscordToken,
-            ChannelIds = new[] { ChannelIds.FilterTestCases },
+            ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("has:image")
@@ -103,7 +103,7 @@ public class FilterSpecs
         await new ExportChannelsCommand
         {
             Token = Secrets.DiscordToken,
-            ChannelIds = new[] { ChannelIds.FilterTestCases },
+            ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("has:pin")
@@ -129,7 +129,7 @@ public class FilterSpecs
         await new ExportChannelsCommand
         {
             Token = Secrets.DiscordToken,
-            ChannelIds = new[] { ChannelIds.FilterTestCases },
+            ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("mentions:Tyrrrz")
