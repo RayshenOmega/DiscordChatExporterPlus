@@ -30,6 +30,9 @@ public partial record Embed(
     public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() =>
         SpotifyTrackEmbedProjection.TryResolve(this);
 
+    public TwitchClipEmbedProjection? TryGetTwitchClip() =>
+        TwitchClipEmbedProjection.TryResolve(this);
+
     public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
         YouTubeVideoEmbedProjection.TryResolve(this);
 }
