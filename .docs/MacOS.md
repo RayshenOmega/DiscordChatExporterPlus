@@ -6,7 +6,7 @@
 
 Please follow the [instructions provided here](Dotnet.md).
 
-## Downloading and using DiscordChatExporter.Cli
+## Downloading and using DiscordChatExporterPlus.Cli
 
 1. Download [DiscordChatExporterPlus.CLI.zip](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) and extract it to a folder.
 2. Search for `Terminal.app` in Spotlight (⌘+SPACE), then open it.
@@ -14,7 +14,19 @@ Please follow the [instructions provided here](Dotnet.md).
 4. Execute the following command to export, replacing `TOKEN` and `CHANNEL` with your own values:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t TOKEN -c CHANNEL
+./DiscordChatExporterPlus.Cli.sh export -t TOKEN -c CHANNEL
+```
+
+If the above command throws a "Permission denied" error, use `chmod` to fix the permissions:
+
+```console
+chmod +x DiscordChatExporterPlus.Cli.sh
+```
+
+Alternatively, if the script doesn't work, you can run the following command to run the application directly:
+
+```console
+dotnet DiscordChatExporterPlus.Cli.dll export -t TOKEN -c CHANNEL
 ```
 
 > [How to get Token and Channel IDs](Token-and-IDs.md).

@@ -27,7 +27,19 @@ You can also drag and drop the folder on **every platform**.
 Now we're ready to run the commands. The examples on this page follow the Windows file path format, change the file
 paths according to your system.
 
-Type the following in Command Prompt (Terminal), then press ENTER to run it. This will list DCE's options.
+On **Windows**, type the following command in your terminal of choice, then press ENTER to run it. This will list all available subcommands and options.
+
+```console
+DiscordChatExporterPlus.Cli.exe
+```
+
+On **macOS** and **Linux**, run the following instead:
+
+```console
+./DiscordChatExporterPlus.Cli.sh
+```
+
+If either of the above approaches don't work for you, you can also run **DiscordChatExporterPlus** directly like this, regardless of the platform:
 
 ```console
 dotnet DiscordChatExporterPlus.Cli.dll
