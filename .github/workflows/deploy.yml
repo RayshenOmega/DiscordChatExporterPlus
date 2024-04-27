@@ -27,6 +27,7 @@ jobs:
             -p:Version=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
             --output DiscordChatExporter.Cli/bin/Publish/
             --configuration Release
+            --use-current-runtime
 
       - name: Publish (GUI)
         run: >
@@ -34,6 +35,7 @@ jobs:
             -p:Version=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
             -o DiscordChatExporter.Gui/bin/Publish/
             --configuration Release
+            --use-current-runtime
 
       - name: Create package (CLI)
         run: Compress-Archive -Path DiscordChatExporter.Cli/bin/Publish/* -DestinationPath DiscordChatExporterPlus.Cli.zip -Force
