@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Onova;
 using Onova.Exceptions;
@@ -9,7 +10,15 @@ namespace DiscordChatExporter.Gui.Services;
 public class UpdateService(SettingsService settingsService) : IDisposable
 {
     private readonly IUpdateManager _updateManager = new UpdateManager(
-        new GithubPackageResolver("nulldg", "DiscordChatExporterPlus", "DiscordChatExporterPlus.zip"),
+        new GithubPackageResolver(
+            "nulldg",
+            "DiscordChatExporterPlus",
+            // Examples:
+            // DiscordChatExporterPlus.win-arm64.zip
+            // DiscordChatExporterPlus.win-x64.zip
+            // DiscordChatExporterPlus.linux-x64.zip
+            $"DiscordChatExporterPlus.{RuntimeInformation.RuntimeIdentifier}.zip"
+        ),
         new ZipPackageExtractor()
     );
 

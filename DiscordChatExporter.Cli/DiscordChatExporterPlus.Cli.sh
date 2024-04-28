@@ -1,1 +1,0 @@
-dotnet "$(dirname "$0")/DiscordChatExporterPlus.Cli.dll" "$@"

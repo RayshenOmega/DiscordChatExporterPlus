@@ -15,7 +15,6 @@ It works with direct messages, group messages, and server channels, and supports
 This application comes in two flavors: graphical user interface (**GUI**) and command-line interface (**CLI**).
 Supported operating systems are Windows 7 or higher, macOS 10.13 (High Sierra) or higher, and Linux.
 
-
 ## Installation
 
 To install this fork, download the [latest release](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest) and extract the zip into an empty directory.
@@ -33,8 +32,8 @@ If you already have a copy of DiscordChatExporter and wish to switch to this for
 
 ## Features
 
-- Graphical user interface (Windows)
-- Command-line interface (Windows, Linux, macOS)
+- Graphical and command-line interfaces
+- Fully cross-platform
 - Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features

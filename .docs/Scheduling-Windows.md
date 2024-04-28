@@ -1,6 +1,7 @@
 # Scheduling exports on Windows
 
-We'll be using [DiscordChatExporter CLI](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest), PowerShell, and Task Scheduler.
+We'll be using [DiscordChatExporterPlus CLI](https://github.com/nulldg/DiscordChatExporterPlus/releases/latest), PowerShell, and Task Scheduler.
+Make sure you already have **DiscordChatExporterPlus.CLI** downloaded and **.NET Runtime** installed.
 
 ## Creating the script
 
@@ -19,7 +20,7 @@ $EXPORTFORMAT = "formathere"
 
 cd $EXEPATH
 
-.\DiscordChatExporter.Cli.exe export -t $TOKEN -c $CHANNEL -f $EXPORTFORMAT -o "$FILENAME.tmp"
+./DiscordChatExporterPlus.Cli export -t $TOKEN -c $CHANNEL -f $EXPORTFORMAT -o "$FILENAME.tmp"
 
 $Date = Get-Date -Format "yyyy-MM-dd-HH-mm"
 
@@ -35,7 +36,7 @@ exit
 
 - `tokenhere` with your [Token](Token-and-IDs.md)
 - `channelhere` with a [Channel ID](Token-and-IDs.md)
-- `exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporter)
+- `exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporterPlus)
 - `filenamehere` with a filename without spaces
 - `dirhere` with the export directory (e.g. C:\Users\User\Documents\Exports)
 - `formathere` with one of the available export formats

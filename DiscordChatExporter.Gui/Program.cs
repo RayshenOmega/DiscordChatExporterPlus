@@ -17,8 +17,6 @@ public static class Program
 
     public static string ProjectUrl { get; } = "https://github.com/nulldg/DiscordChatExporterPlus";
 
-    public static string LatestReleaseUrl { get; } = ProjectUrl + "/releases/latest";
-
     public static string DocumentationUrl { get; } = ProjectUrl + "/tree/master/.docs";
 
     public static AppBuilder BuildAvaloniaApp() =>

@@ -1,55 +1,145 @@
-name: auto-deploy
+name: main
 
-on: push
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
-  deploy:
+  pack:
     if: ${{ github.ref_type == 'tag' }}
-    runs-on: windows-latest
 
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      DOTNET_NOLOGO: true
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    strategy:
+      matrix:
+        app:
+          - DiscordChatExporter.Cli
+          - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporterPlus.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporterPlus
+
+    # Need to run on Windows because of DotnetRuntimeBootstrapper's dependency on Ressy
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    permissions:
+      actions: write
+      contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Install .NET
-        uses: actions/setup-dotnet@3e6b9fe3930cac7c59c651af5de1514b47a805b9
+        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
         with:
           dotnet-version: 8.0.x
 
-      - name: Publish (CLI)
+      - name: Publish app
         run: >
-            dotnet publish DiscordChatExporter.Cli/
-            -p:Version=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
-            --output DiscordChatExporter.Cli/bin/Publish/
-            --configuration Release
-            --use-current-runtime
+          dotnet publish ${{ matrix.app }}
+          -p:Version=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
+          --output ${{ matrix.app }}/bin/publish/
+          --configuration Release
+          --runtime ${{ matrix.rid }}
+          --no-self-contained
 
-      - name: Publish (GUI)
-        run: >
-            dotnet publish DiscordChatExporter.Gui/
-            -p:Version=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
-            -o DiscordChatExporter.Gui/bin/Publish/
-            --configuration Release
-            --use-current-runtime
+      - name: Upload artifacts
+        uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+        with:
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
+          path: ${{ matrix.app }}/bin/publish/
+          if-no-files-found: error
 
-      - name: Create package (CLI)
-        run: Compress-Archive -Path DiscordChatExporter.Cli/bin/Publish/* -DestinationPath DiscordChatExporterPlus.Cli.zip -Force
-        shell: pwsh
+  release:
+    needs: pack
 
-      - name: Create package (GUI)
-        run: Compress-Archive -Path DiscordChatExporter.Gui/bin/Publish/* -DestinationPath DiscordChatExporterPlus.zip -Force
-        shell: pwsh
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
+    permissions:
+      contents: write
+
+    steps:
       - name: Create release
-        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${{ github.ref_name }}
+          --repo ${{ github.event.repository.full_name }}
+          --title ${{ github.ref_name }}
+          --generate-notes
+          --verify-tag
+
+  deploy:
+    needs: release
+
+    strategy:
+      matrix:
+        app:
+          - DiscordChatExporter.Cli
+          - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporterPlus.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporterPlus
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
         with:
-          files: |
-            DiscordChatExporterPlus.Cli.zip
-            DiscordChatExporterPlus.zip
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
+          path: ${{ matrix.app }}/
+          
+      - name: Create package
+        # Change into the artifacts directory to avoid including the directory itself in the zip archive
+        working-directory: ${{ matrix.app }}/
+        run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
+
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release upload ${{ github.ref_name }}
+          ${{ matrix.asset }}.${{ matrix.rid }}.zip
+          --repo ${{ github.event.repository.full_name }}

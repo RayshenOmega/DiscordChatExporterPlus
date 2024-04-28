@@ -67,22 +67,6 @@ public partial class MainViewModel(
             App.SetLightTheme();
 
         await CheckForUpdatesAsync();
-
-        // App has just been updated, display the changelog
-        if (
-            settingsService.LastAppVersion is not null
-            && settingsService.LastAppVersion != Program.Version
-        )
-        {
-            snackbarManager.Notify(
-                $"Successfully updated to {Program.Name} v{Program.VersionString}",
-                "WHAT'S NEW",
-                () => ProcessEx.StartShellExecute(Program.LatestReleaseUrl)
-            );
-
-            settingsService.LastAppVersion = Program.Version;
-            settingsService.Save();
-        }
     }
 
     protected override void Dispose(bool disposing)
