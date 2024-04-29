@@ -31,8 +31,7 @@ If you already have a copy of DiscordChatExporter and wish to switch to this for
 
 ## Features
 
-- Graphical and command-line interfaces
-- Fully cross-platform
+- Cross-platform graphical and command-line interfaces
 - Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features
