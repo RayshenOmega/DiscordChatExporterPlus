@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <DebugType>embedded</DebugType>
-    <AssemblyName>DiscordChatExporterPlus.CLI</AssemblyName>
+    <AssemblyName>DiscordChatExporterPlus.Cli</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
