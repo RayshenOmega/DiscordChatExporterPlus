@@ -5,6 +5,8 @@
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <DebugType>embedded</DebugType>
     <AssemblyName>DiscordChatExporterPlus.Cli</AssemblyName>
+    <PublishTrimmed>true</PublishTrimmed>
+    <NoWarn>$(NoWarn);IL2104</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
