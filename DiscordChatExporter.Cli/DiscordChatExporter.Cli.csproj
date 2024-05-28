@@ -6,6 +6,7 @@
     <DebugType>embedded</DebugType>
     <AssemblyName>DiscordChatExporterPlus.Cli</AssemblyName>
     <PublishTrimmed>true</PublishTrimmed>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
 
   <ItemGroup>
