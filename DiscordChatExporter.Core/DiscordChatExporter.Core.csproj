@@ -8,10 +8,10 @@
     <PackageReference Include="AsyncKeyedLock" Version="6.4.2" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
-    <PackageReference Include="Polly" Version="8.4.0" />
+    <PackageReference Include="Polly" Version="8.4.1" />
     <PackageReference Include="RazorBlade" Version="0.6.0" />
     <PackageReference Include="Superpower" Version="3.0.0" />
-    <PackageReference Include="WebMarkupMin.Core" Version="2.16.0" />
+    <PackageReference Include="WebMarkupMin.Core" Version="2.16.2" />
   </ItemGroup>
 
 </Project>
