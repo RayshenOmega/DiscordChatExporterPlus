@@ -3,17 +3,19 @@ using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
-internal interface IMatcher<T>
+internal interface IMatcher<in TContext, TValue>
 {
-    ParsedMatch<T>? TryMatch(StringSegment segment);
+    ParsedMatch<TValue>? TryMatch(TContext context, StringSegment segment);
 }
 
 internal static class MatcherExtensions
 {
-    public static IEnumerable<ParsedMatch<T>> MatchAll<T>(
-        this IMatcher<T> matcher,
+    public static IEnumerable<ParsedMatch<TValue>> MatchAll<TContext, TValue>(
+        this IMatcher<TContext, TValue> matcher,
+        TContext context,
         StringSegment segment,
-        Func<StringSegment, T> transformFallback)
+        Func<TContext, StringSegment, TValue> transformFallback
+    )
     {
         // Loop through segments divided by individual matches
         var currentIndex = segment.StartIndex;
@@ -21,10 +23,8 @@ internal static class MatcherExtensions
         {
             // Find a match within this segment
             var match = matcher.TryMatch(
-                segment.Relocate(
-                    currentIndex,
-                    segment.EndIndex - currentIndex
-                )
+                context,
+                segment.Relocate(currentIndex, segment.EndIndex - currentIndex)
             );
 
             if (match is null)
@@ -38,7 +38,10 @@ internal static class MatcherExtensions
                     match.Segment.StartIndex - currentIndex
                 );
 
-                yield return new ParsedMatch<T>(fallbackSegment, transformFallback(fallbackSegment));
+                yield return new ParsedMatch<TValue>(
+                    fallbackSegment,
+                    transformFallback(context, fallbackSegment)
+                );
             }
 
             yield return match;
@@ -50,12 +53,12 @@ internal static class MatcherExtensions
         // If EOL hasn't been reached - transform and yield remaining part as fallback
         if (currentIndex < segment.EndIndex)
         {
-            var fallbackSegment = segment.Relocate(
-                currentIndex,
-                segment.EndIndex - currentIndex
-            );
+            var fallbackSegment = segment.Relocate(currentIndex, segment.EndIndex - currentIndex);
 
-            yield return new ParsedMatch<T>(fallbackSegment, transformFallback(fallbackSegment));
+            yield return new ParsedMatch<TValue>(
+                fallbackSegment,
+                transformFallback(context, fallbackSegment)
+            );
         }
     }
 }
