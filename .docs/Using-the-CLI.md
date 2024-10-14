@@ -125,6 +125,7 @@ Here is the full list of supported template tokens:
 - `%P` - category position
 - `%a` - the "after" date
 - `%b` - the "before" date
+- `%d` - the current date
 - `%%` - escapes `%`
 
 #### Partitioning
