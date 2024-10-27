@@ -154,23 +154,8 @@ public partial class ExportRequest
         Channel channel,
         Snowflake? after,
         Snowflake? before
-    )
-    {
-        var recursivePattern = Regex.Match(path, "%r(%.*)%r");
-        if (
-            channel.Parent?.Parent != null
-            && recursivePattern.Success
-            && recursivePattern.Groups.Count > 1
-        )
-        {
-            var groupValue = recursivePattern.Groups[1].Value;
-            path = path.Replace(
-                recursivePattern.Value,
-                FormatPath(groupValue, guild, channel.Parent, after, before)
-            );
-        }
-
-        return Regex.Replace(
+    ) =>
+        Regex.Replace(
             path,
             "%.",
             m =>
@@ -187,29 +172,24 @@ public partial class ExportRequest
                         "%C" => channel.Name,
 
                         "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
-                        "%P"
-                            => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
-                                ?? "0",
+                        "%P" => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
+                            ?? "0",
 
-                        "%a"
-                            => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-                                ?? "",
-                        "%b"
-                            => before?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-                                ?? "",
-                        "%d"
-                            => DateTimeOffset.Now.ToString(
-                                "yyyy-MM-dd",
-                                CultureInfo.InvariantCulture
-                            ),
+                        "%a" => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                            ?? "",
+                        "%b" => before
+                            ?.ToDate()
+                            .ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
+                        "%d" => DateTimeOffset.Now.ToString(
+                            "yyyy-MM-dd",
+                            CultureInfo.InvariantCulture
+                        ),
 
                         "%%" => "%",
-                        "%r" => string.Empty,
-                        _ => m.Value
+                        _ => m.Value,
                     }
                 )
         );
-    }
 
     private static string GetOutputBaseFilePath(
         Guild guild,

@@ -29,7 +29,7 @@ public class FilterSpecs
             ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            MessageFilter = MessageFilter.Parse("some text")
+            MessageFilter = MessageFilter.Parse("some text"),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
@@ -55,7 +55,7 @@ public class FilterSpecs
             ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            MessageFilter = MessageFilter.Parse("from:Tyrrrz")
+            MessageFilter = MessageFilter.Parse("from:Tyrrrz"),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
@@ -81,7 +81,7 @@ public class FilterSpecs
             ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            MessageFilter = MessageFilter.Parse("has:image")
+            MessageFilter = MessageFilter.Parse("has:image"),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
@@ -107,7 +107,7 @@ public class FilterSpecs
             ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            MessageFilter = MessageFilter.Parse("has:pin")
+            MessageFilter = MessageFilter.Parse("has:pin"),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
@@ -133,7 +133,7 @@ public class FilterSpecs
             ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            MessageFilter = MessageFilter.Parse("has:invite")
+            MessageFilter = MessageFilter.Parse("has:invite"),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
@@ -158,7 +158,7 @@ public class FilterSpecs
             ChannelIds = [ChannelIds.FilterTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            MessageFilter = MessageFilter.Parse("mentions:Tyrrrz")
+            MessageFilter = MessageFilter.Parse("mentions:Tyrrrz"),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
