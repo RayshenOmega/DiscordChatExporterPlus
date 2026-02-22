@@ -39,7 +39,11 @@ public class JsonMentionSpecs
         );
 
         // Assert
-        message.GetProperty("content").GetString().Should().Be("Text channel mention: #mention-tests");
+        message
+            .GetProperty("content")
+            .GetString()
+            .Should()
+            .Be("Text channel mention: #mention-tests");
     }
 
     [Fact]
@@ -52,7 +56,11 @@ public class JsonMentionSpecs
         );
 
         // Assert
-        message.GetProperty("content").GetString().Should().Be("Voice channel mention: #general [voice]");
+        message
+            .GetProperty("content")
+            .GetString()
+            .Should()
+            .Be("Voice channel mention: #general [voice]");
     }
 
     [Fact]
@@ -66,5 +74,22 @@ public class JsonMentionSpecs
 
         // Assert
         message.GetProperty("content").GetString().Should().Be("Role mention: @Role 1");
+    }
+
+    [Fact]
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_thread_mention()
+    {
+        // Act
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
+            ChannelIds.MentionTestCases,
+            Snowflake.Parse("1474874276828938290")
+        );
+
+        // Assert
+        message
+            .GetProperty("content")
+            .GetString()
+            .Should()
+            .Be("Thread mention: #Thread starting message");
     }
 }
