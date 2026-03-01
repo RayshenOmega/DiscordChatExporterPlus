@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels.Components;
@@ -13,7 +14,8 @@ public partial class MainViewModel(
     ViewModelManager viewModelManager,
     SnackbarManager snackbarManager,
     SettingsService settingsService,
-    UpdateService updateService
+    UpdateService updateService,
+    LocalizationManager localizationManager
 ) : ViewModelBase
 {
     public string Title { get; } = $"{Program.Name} v{Program.VersionString}";
@@ -28,12 +30,18 @@ public partial class MainViewModel(
             if (updateVersion is null)
                 return;
 
-            snackbarManager.Notify($"Downloading update to {Program.Name} v{updateVersion}...");
+            snackbarManager.Notify(
+                string.Format(
+                    localizationManager.UpdateDownloadingMessage,
+                    Program.Name,
+                    updateVersion
+                )
+            );
             await updateService.PrepareUpdateAsync(updateVersion);
 
             snackbarManager.Notify(
-                "Update has been downloaded and will be installed when you exit",
-                "INSTALL NOW",
+                localizationManager.UpdateReadyMessage,
+                localizationManager.UpdateInstallNowButton,
                 () =>
                 {
                     updateService.FinalizeUpdate(true);
@@ -46,7 +54,7 @@ public partial class MainViewModel(
         catch
         {
             // Failure to update shouldn't crash the application
-            snackbarManager.Notify("Failed to perform application update");
+            snackbarManager.Notify(localizationManager.UpdateFailedMessage);
         }
     }
 

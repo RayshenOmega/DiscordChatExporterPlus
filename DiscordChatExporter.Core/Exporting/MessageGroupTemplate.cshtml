@@ -34,7 +34,7 @@
 }
 
 <div class="chatlog__message-group">
-@foreach (var (message, i) in Messages.WithIndex())
+@foreach (var (i, message) in Messages.Index())
 {
     var isFirst = i == 0;
 
@@ -259,6 +259,95 @@
                             {
                                 <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value, "f")">(edited)</span>
                             }
+                        </div>
+                    }
+
+                    @* Forwarded message *@
+                    @if (message is { IsForwarded: true, ForwardedMessage: not null })
+                    {
+                        <div class="chatlog__forwarded">
+                            <div class="chatlog__forwarded-header">
+                                <svg class="chatlog__forwarded-icon">
+                                    <use href="#forward-icon"></use>
+                                </svg>
+                                <em>Forwarded</em>
+                            </div>
+
+                            @* Forwarded content *@
+                            @if (!string.IsNullOrWhiteSpace(message.ForwardedMessage.Content))
+                            {
+                                <div class="chatlog__forwarded-content chatlog__markdown">
+                                    <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Html.Raw(await FormatMarkdownAsync(message.ForwardedMessage.Content))<!--/wmm:ignore--></span>
+                                </div>
+                            }
+
+                            @* Forwarded attachments *@
+                            @if (message.ForwardedMessage.Attachments.Any())
+                            {
+                                <div class="chatlog__forwarded-attachments">
+                                    @foreach (var attachment in message.ForwardedMessage.Attachments)
+                                    {
+                                        @if (attachment.IsImage)
+                                        {
+                                            <a href="@await ResolveAssetUrlAsync(attachment.Url)">
+                                                <img class="chatlog__forwarded-attachment" src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Image attachment")" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
+                                            </a>
+                                        }
+                                        else if (attachment.IsVideo)
+                                        {
+                                            <video class="chatlog__forwarded-attachment" controls>
+                                                <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Video attachment")" title="Video: @attachment.FileName (@attachment.FileSize)">
+                                            </video>
+                                        }
+                                        else if (attachment.IsAudio)
+                                        {
+                                            <audio class="chatlog__forwarded-attachment" controls>
+                                                <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Audio attachment")" title="Audio: @attachment.FileName (@attachment.FileSize)">
+                                            </audio>
+                                        }
+                                        else
+                                        {
+                                            <div class="chatlog__attachment-generic">
+                                                <svg class="chatlog__attachment-generic-icon">
+                                                    <use href="#attachment-icon"/>
+                                                </svg>
+                                                <div class="chatlog__attachment-generic-name">
+                                                    <a href="@await ResolveAssetUrlAsync(attachment.Url)">
+                                                        @attachment.FileName
+                                                    </a>
+                                                </div>
+                                                <div class="chatlog__attachment-generic-size">
+                                                    @attachment.FileSize
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            }
+
+                            @* Forwarded stickers *@
+                            @foreach (var sticker in message.ForwardedMessage.Stickers)
+                            {
+                                <div class="chatlog__sticker" title="@sticker.Name">
+                                    @if (sticker.IsImage)
+                                    {
+                                        <img class="chatlog__sticker--media" src="@await ResolveAssetUrlAsync(sticker.SourceUrl)" alt="Sticker">
+                                    }
+                                    else if (sticker.Format == StickerFormat.Lottie)
+                                    {
+                                        <div class="chatlog__sticker--media" data-source="@await ResolveAssetUrlAsync(sticker.SourceUrl)"></div>
+                                    }
+                                </div>
+                            }
+
+                            @* Forwarded timestamp *@
+                            <div class="chatlog__forwarded-timestamp">
+                                <span title="@FormatDate(message.ForwardedMessage.Timestamp, "f")">Originally sent: @FormatDate(message.ForwardedMessage.Timestamp)</span>
+                                @if (message.ForwardedMessage.EditedTimestamp is not null)
+                                {
+                                    <span title="@FormatDate(message.ForwardedMessage.EditedTimestamp.Value, "f")"> (edited)</span>
+                                }
+                            </div>
                         </div>
                     }
 

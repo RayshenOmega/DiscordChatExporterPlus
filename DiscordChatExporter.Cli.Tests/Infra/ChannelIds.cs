@@ -16,6 +16,8 @@ public static class ChannelIds
 
     public static Snowflake FilterTestCases { get; } = Snowflake.Parse("866744075033641020");
 
+    public static Snowflake ForwardTestCases { get; } = Snowflake.Parse("1455202357204877477");
+
     public static Snowflake MarkdownTestCases { get; } = Snowflake.Parse("866459526819348521");
 
     public static Snowflake MentionTestCases { get; } = Snowflake.Parse("866458801389174794");

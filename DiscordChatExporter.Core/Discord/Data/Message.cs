@@ -27,9 +27,16 @@ public partial record Message(
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
     Message? ReferencedMessage,
+    MessageSnapshot? ForwardedMessage,
     Interaction? Interaction
 ) : IHasId
 {
+    public bool IsEmpty { get; } =
+        string.IsNullOrWhiteSpace(Content)
+        && !Attachments.Any()
+        && !Embeds.Any()
+        && !Stickers.Any();
+
     public bool IsSystemNotification { get; } =
         Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated;
 
@@ -38,11 +45,7 @@ public partial record Message(
     // App interactions are rendered as replies in the Discord client, but they are not actually replies
     public bool IsReplyLike => IsReply || Interaction is not null;
 
-    public bool IsEmpty { get; } =
-        string.IsNullOrWhiteSpace(Content)
-        && !Attachments.Any()
-        && !Embeds.Any()
-        && !Stickers.Any();
+    public bool IsForwarded { get; } = Reference?.Kind == MessageReferenceKind.Forward;
 
     public IEnumerable<User> GetReferencedUsers()
     {
@@ -171,7 +174,17 @@ public partial record Message
 
         var messageReference = json.GetPropertyOrNull("message_reference")
             ?.Pipe(MessageReference.Parse);
+
         var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
+
+        // Currently Discord only supports 1 snapshot per forward
+        var forwardedMessage = json.GetPropertyOrNull("message_snapshots")
+            ?.EnumerateArrayOrNull()
+            ?.Select(j => j.GetPropertyOrNull("message"))
+            .WhereNotNull()
+            .Select(MessageSnapshot.Parse)
+            .FirstOrDefault();
+
         var interaction = json.GetPropertyOrNull("interaction")?.Pipe(Interaction.Parse);
 
         return new Message(
@@ -191,6 +204,7 @@ public partial record Message
             mentionedUsers,
             messageReference,
             referencedMessage,
+            forwardedMessage,
             interaction
         );
     }

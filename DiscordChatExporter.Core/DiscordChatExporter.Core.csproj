@@ -4,12 +4,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncKeyedLock" Version="8.0.1" />
-    <PackageReference Include="Gress" Version="2.1.1" />
-    <PackageReference Include="JsonExtensions" Version="1.2.0" />
-    <PackageReference Include="Polly" Version="8.6.5" />
-    <PackageReference Include="RazorBlade" Version="0.11.0" />
-    <PackageReference Include="Superpower" Version="3.1.0" />
-    <PackageReference Include="WebMarkupMin.Core" Version="2.20.1" />
+    <PackageReference Include="AsyncKeyedLock" />
+    <PackageReference Include="Gress" />
+    <PackageReference Include="JsonExtensions" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="RazorBlade" />
+    <PackageReference Include="Superpower" />
+    <PackageReference Include="WebMarkupMin.Core" />
   </ItemGroup>
 </Project>

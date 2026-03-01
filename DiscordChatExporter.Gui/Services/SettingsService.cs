@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Models;
 
 namespace DiscordChatExporter.Gui.Services;
@@ -19,6 +20,9 @@ public partial class SettingsService()
 {
     [ObservableProperty]
     public partial ThemeVariant Theme { get; set; }
+
+    [ObservableProperty]
+    public partial Language Language { get; set; }
 
     [ObservableProperty]
     public partial bool IsAutoUpdateEnabled { get; set; } = true;
@@ -43,6 +47,7 @@ public partial class SettingsService()
     public partial int ParallelLimit { get; set; } = 1;
 
     [ObservableProperty]
+    [JsonConverter(typeof(TokenEncryptionConverter))]
     public partial string? LastToken { get; set; }
 
     [ObservableProperty]
@@ -53,6 +58,9 @@ public partial class SettingsService()
 
     [ObservableProperty]
     public partial string? LastMessageFilterValue { get; set; }
+
+    [ObservableProperty]
+    public partial bool LastIsReverseMessageOrder { get; set; }
 
     [ObservableProperty]
     public partial bool LastShouldFormatMarkdown { get; set; } = true;

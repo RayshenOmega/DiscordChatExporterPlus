@@ -90,6 +90,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public int ParallelLimit { get; init; } = 1;
 
     [CommandOption(
+        "reverse",
+        Description = "Export messages in reverse chronological order (newest first)."
+    )]
+    public bool IsReverseMessageOrder { get; init; }
+
+    [CommandOption(
         "markdown",
         Description = "Process markdown, mentions, and other special tokens."
     )]
@@ -282,6 +288,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         Before,
                                         PartitionLimit,
                                         MessageFilter,
+                                        IsReverseMessageOrder,
                                         ShouldFormatMarkdown,
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,

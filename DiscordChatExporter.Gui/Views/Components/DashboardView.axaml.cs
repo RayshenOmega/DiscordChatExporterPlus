@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Gui.Framework;
@@ -35,5 +36,13 @@ public partial class DashboardView : UserControl<DashboardViewModel>
             if (AvailableChannelsTreeView.TreeContainerFromItem(item) is TreeViewItem container)
                 container.IsSelected = false;
         }
+    }
+
+    private void ChannelGrid_OnDoubleTapped(object? sender, TappedEventArgs args)
+    {
+        if (DataContext.SelectedChannels.Count != 1)
+            return;
+
+        DataContext.ExportCommand.Execute(null);
     }
 }
