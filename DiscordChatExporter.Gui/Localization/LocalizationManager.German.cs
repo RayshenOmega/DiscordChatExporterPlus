@@ -44,7 +44,7 @@ public partial class LocalizationManager
             *  Ihr Bot benötigt die aktivierte **Message Content Intent**, um Nachrichten zu lesen
             """,
         [nameof(TokenHelpText)] =
-            "Bei Fragen oder Problemen lesen Sie die [Dokumentation](https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs)",
+            "Bei Fragen oder Problemen lesen Sie die [Dokumentation](https://github.com/Tyrrrz/DiscordChatExporter/tree/prime/.docs)",
         // Settings
         [nameof(SettingsTitle)] = "Einstellungen",
         [nameof(ThemeLabel)] = "Design",

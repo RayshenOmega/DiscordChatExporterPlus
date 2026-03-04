@@ -29,21 +29,20 @@ Type the following command in your terminal of choice, then press ENTER to run i
 > **Note**:
 > On Windows, if you're using the default Command Prompt (`cmd`), omit the leading `./` at the start of the command.
 
-
 > **Docker** users, please refer to the [Docker usage instructions](Docker.md).
 
 ## CLI commands
 
-| Command                 | Description                                          |
-|-------------------------|------------------------------------------------------|
-| export                  | Exports a channel                                    |
-| exportdm                | Exports all direct message channels                  |
-| exportguild             | Exports all channels within the specified server     |
-| exportall               | Exports all accessible channels                      |
-| channels                | Outputs the list of channels in the given server     |
-| dm                      | Outputs the list of direct message channels          |
-| guilds                  | Outputs the list of accessible servers               |
-| guide                   | Explains how to obtain token, server, and channel ID |
+| Command     | Description                                          |
+| ----------- | ---------------------------------------------------- |
+| export      | Exports a channel                                    |
+| exportdm    | Exports all direct message channels                  |
+| exportguild | Exports all channels within the specified server     |
+| exportall   | Exports all accessible channels                      |
+| channels    | Outputs the list of channels in the given server     |
+| dm          | Outputs the list of direct message channels          |
+| guilds      | Outputs the list of accessible servers               |
+| guide       | Explains how to obtain token, server, and channel ID |
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./DiscordChatExporter.Cli guide`.
 
@@ -222,7 +221,7 @@ Use `--filter` to filter what messages are included in the export.
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --filter "from:Tyrrrz has:image"
 ```
 
-Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md).
+Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs/Message-filters.md).
 
 ### Export channels from a specific server
 

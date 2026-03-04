@@ -21,7 +21,7 @@ public static class Program
 
     public static string ProjectReleasesUrl { get; } = $"{ProjectUrl}/releases";
 
-    public static string ProjectDocumentationUrl { get; } = ProjectUrl + "/tree/master/.docs";
+    public static string ProjectDocumentationUrl { get; } = ProjectUrl + "/tree/prime/.docs";
 
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace();

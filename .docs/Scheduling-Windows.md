@@ -5,7 +5,7 @@
 1. Open a text editor such as Notepad and paste:
 
 ```console
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
+# Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs
 
 $TOKEN = "tokenhere"
 $CHANNEL = "channelhere"

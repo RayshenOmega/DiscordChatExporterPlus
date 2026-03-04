@@ -74,7 +74,7 @@ public class GuideCommand : ICommand
         using (console.WithForegroundColor(ConsoleColor.DarkCyan))
         {
             console.Output.WriteLine(
-                "https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs"
+                "https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs"
             );
         }
 
