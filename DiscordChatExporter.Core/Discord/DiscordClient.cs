@@ -33,16 +33,40 @@ public class DiscordClient(
     )
     {
         return await Http.ResponseResiliencePipeline.ExecuteAsync(
-            async innerCancellationToken =>
+           async innerCancellationToken =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
-                // Don't validate because the token can have special characters
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
+                // Authorization header
                 request.Headers.TryAddWithoutValidation(
                     "Authorization",
                     tokenKind == TokenKind.Bot ? $"Bot {token}" : token
                 );
+
+                // add browser headers like x-super-properties and user-agent
+                // this is really important as discord flags requests that dont have valid xsp header
+                if (tokenKind != TokenKind.Bot)
+                {
+                    try
+                    {
+                        var headersJson = await Http.Client.GetStringAsync(
+                            "https://gist.githubusercontent.com/MinerPL/731977099ca84bef7ad0a66978010045/raw/stable.headers.json",
+                            innerCancellationToken
+                        );
+
+                        var userHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(headersJson);
+                        if (userHeaders is not null)
+                        {
+                            foreach (var kv in userHeaders)
+                                request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
 
                 var response = await Http.Client.SendAsync(
                     request,
