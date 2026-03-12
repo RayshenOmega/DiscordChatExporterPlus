@@ -37,7 +37,8 @@ public class DiscordClient(
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
-                // Authorization header
+                // Don't validate because the token can have special characters
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
                 request.Headers.TryAddWithoutValidation(
                     "Authorization",
                     tokenKind == TokenKind.Bot ? $"Bot {token}" : token
