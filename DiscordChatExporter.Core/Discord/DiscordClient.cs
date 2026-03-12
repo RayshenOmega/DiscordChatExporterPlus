@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,6 +18,31 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord;
 
+// https://docs.discord.food/reference#launch-signature
+static string GenerateLaunchSignature()
+{
+    const string maskBinary =
+        "00000000100000000001000000010000000010000001000000001000000000000010000010000001000000000100000000000001000000000000100000000000";
+
+    var mask = Convert.ToUInt128(maskBinary, 2);
+
+    var uuid = Guid.NewGuid().ToByteArray();
+    var value = new UInt128(BitConverter.ToUInt64(uuid, 8), BitConverter.ToUInt64(uuid, 0));
+
+    value &= ~mask;
+
+    Span<byte> bytes = stackalloc byte[16];
+    BitConverter.TryWriteBytes(bytes[..8], (ulong)value.Lower);
+    BitConverter.TryWriteBytes(bytes[8..], (ulong)value.Upper);
+
+    return new Guid(bytes).ToString();
+}
+
+static string GenerateUuid()
+{
+    return Guid.NewGuid().ToString();
+}
+
 public class DiscordClient(
     string token,
     RateLimitPreference rateLimitPreference = RateLimitPreference.RespectAll
@@ -33,7 +58,7 @@ public class DiscordClient(
     )
     {
         return await Http.ResponseResiliencePipeline.ExecuteAsync(
-           async innerCancellationToken =>
+            async innerCancellationToken =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
@@ -55,19 +80,33 @@ public class DiscordClient(
                             innerCancellationToken
                         );
 
-                        var userHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(headersJson);
-                        if (userHeaders is not null)
+                        var userHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                            headersJson
+                        );
+
+                        if (userHeaders.TryGetValue("x-super-properties", out var xsp))
                         {
+                            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(xsp));
+
+                            var props = JsonSerializer.Deserialize<Dictionary<string, object>>(
+                                decoded
+                            );
+
+                            props["client_heartbeat_session_id"] = GenerateUuid();
+                            props["client_launch_id"] = GenerateUuid();
+                            props["client_launch_signature"] = GenerateLaunchSignature();
+
+                            var newJson = JsonSerializer.Serialize(props);
+                            var newBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(newJson));
+
+                            userHeaders["x-super-properties"] = newBase64;
+
                             foreach (var kv in userHeaders)
                                 request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
                         }
                     }
-                    catch
-                    {
-
-                    }
+                    catch { }
                 }
-
 
                 var response = await Http.Client.SendAsync(
                     request,
