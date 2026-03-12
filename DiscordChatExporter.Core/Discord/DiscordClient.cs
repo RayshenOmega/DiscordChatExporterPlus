@@ -70,40 +70,86 @@ public class DiscordClient(
                 );
 
                 // add browser headers like x-super-properties and user-agent
-                // this is really important as discord flags requests that dont have valid xsp header
+                // discord flags requests that don't look like a real browser
                 if (tokenKind != TokenKind.Bot)
                 {
                     try
                     {
-                        var headersJson = await Http.Client.GetStringAsync(
-                            "https://gist.githubusercontent.com/MinerPL/731977099ca84bef7ad0a66978010045/raw/stable.headers.json",
+                        var apiJson = await Http.Client.GetStringAsync(
+                            "https://cordapi.dolfi.es/api/v2/properties/web",
                             innerCancellationToken
                         );
 
-                        var userHeaders = JsonSerializer.Deserialize<Dictionary<string, string>>(
-                            headersJson
-                        );
+                        using var doc = JsonDocument.Parse(apiJson);
 
-                        if (userHeaders.TryGetValue("x-super-properties", out var xsp))
+                        var client = doc.RootElement.GetProperty("client");
+                        var browser = doc.RootElement.GetProperty("browser");
+                        var os = browser.GetProperty("os");
+
+                        string userAgent = browser.GetProperty("user_agent").GetString()!;
+                        string browserVersion = browser.GetProperty("version").GetString()!;
+                        string browserType = browser.GetProperty("type").GetString()!;
+                        string osType = os.GetProperty("type").GetString()!;
+                        string osVersion = os.GetProperty("version").GetString()!;
+
+                        int buildNumber = client.GetProperty("build_number").GetInt32();
+                        string releaseChannel = client.GetProperty("release_channel").GetString()!;
+
+                        string chromeMajor = browserVersion.Split('.')[0];
+
+                        var xsp = new Dictionary<string, object?>
                         {
-                            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(xsp));
+                            ["os"] = osType,
+                            ["browser"] = browserType,
+                            ["device"] = "",
+                            ["system_locale"] = "en-US",
 
-                            var props = JsonSerializer.Deserialize<Dictionary<string, object>>(
-                                decoded
-                            );
+                            ["browser_user_agent"] = userAgent,
+                            ["browser_version"] = browserVersion,
+                            ["os_version"] = osVersion,
 
-                            props["client_heartbeat_session_id"] = GenerateUuid();
-                            props["client_launch_id"] = GenerateUuid();
-                            props["client_launch_signature"] = GenerateLaunchSignature();
+                            ["referrer"] = "",
+                            ["referring_domain"] = "",
+                            ["referrer_current"] = "https://www.google.com/",
+                            ["referring_domain_current"] = "www.google.com",
+                            ["search_engine_current"] = "google",
+                            ["mp_keyword_current"] = "discord",
 
-                            var newJson = JsonSerializer.Serialize(props);
-                            var newBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(newJson));
+                            ["release_channel"] = releaseChannel,
+                            ["client_build_number"] = buildNumber,
+                            ["client_event_source"] = null,
+                            ["has_client_mods"] = false,
 
-                            userHeaders["x-super-properties"] = newBase64;
+                            ["client_launch_id"] = GenerateUuid(),
+                            ["launch_signature"] = GenerateLaunchSignature(),
+                            ["client_heartbeat_session_id"] = GenerateUuid(),
+                        };
 
-                            foreach (var kv in userHeaders)
-                                request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
-                        }
+                        var xspJson = JsonSerializer.Serialize(xsp);
+                        var xspBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(xspJson));
+
+                        var headers = new Dictionary<string, string>
+                        {
+                            ["sec-ch-ua-platform"] = $"\"{osType}\"",
+                            ["referer"] = "https://discord.com/app",
+                            ["x-debug-options"] = "bugReporterEnabled",
+                            ["accept-language"] = "en-US,en;q=0.9",
+
+                            ["sec-ch-ua"] =
+                                $"\"Chromium\";v=\"{chromeMajor}\", \"Not;A=Brand\";v=\"99\"",
+
+                            ["sec-ch-ua-mobile"] = "?0",
+
+                            ["x-discord-timezone"] = "Europe/Warsaw",
+                            ["x-context-properties"] = "eyJsb2NhdGlvbiI6Ii9hcHAifQ==",
+                            ["x-discord-locale"] = "en-US",
+
+                            ["user-agent"] = userAgent,
+                            ["x-super-properties"] = xspBase64,
+                        };
+
+                        foreach (var kv in headers)
+                            request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
                     }
                     catch { }
                 }
