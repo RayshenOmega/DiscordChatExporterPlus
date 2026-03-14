@@ -18,30 +18,6 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord;
 
-// https://docs.discord.food/reference#launch-signature
-static string GenerateLaunchSignature()
-{
-    const string maskBinary =
-        "00000000100000000001000000010000000010000001000000001000000000000010000010000001000000000100000000000001000000000000100000000000";
-
-    var mask = Convert.ToUInt128(maskBinary, 2);
-
-    var uuid = Guid.NewGuid().ToByteArray();
-    var value = new UInt128(BitConverter.ToUInt64(uuid, 8), BitConverter.ToUInt64(uuid, 0));
-
-    value &= ~mask;
-
-    Span<byte> bytes = stackalloc byte[16];
-    BitConverter.TryWriteBytes(bytes[..8], (ulong)value.Lower);
-    BitConverter.TryWriteBytes(bytes[8..], (ulong)value.Upper);
-
-    return new Guid(bytes).ToString();
-}
-
-static string GenerateUuid()
-{
-    return Guid.NewGuid().ToString();
-}
 
 public class DiscordClient(
     string token,
@@ -50,6 +26,7 @@ public class DiscordClient(
 {
     private readonly Uri _baseUri = new("https://discord.com/api/v10/", UriKind.Absolute);
     private TokenKind? _resolvedTokenKind;
+    private static Dictionary<string, string>? _cachedBrowserHeaders;
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -76,9 +53,8 @@ public class DiscordClient(
                 try
                 {
                     // Cache headers from the external API so we don't make this request on every call.
-                    static Dictionary<string, string>? cachedHeaders;
 
-                    if (cachedHeaders is null)
+                    if (_cachedBrowserHeaders is null)
                     {
                         using var apiReq = new HttpRequestMessage(
                             HttpMethod.Post,
@@ -124,7 +100,7 @@ public class DiscordClient(
                             ["x-super-properties"] = xspBase64,
                         };
 
-                        cachedHeaders = headers;
+                        _cachedBrowserHeaders = headers;
                     }
 
                     foreach (var kv in cachedHeaders)
