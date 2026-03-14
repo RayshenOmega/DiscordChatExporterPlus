@@ -103,8 +103,8 @@ public class DiscordClient(
                         _cachedBrowserHeaders = headers;
                     }
 
-                    foreach (var kv in cachedHeaders)
-                        request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+                    foreach (var kv in _cachedBrowserHeaders)
+                         if (!request.Headers.Contains(kv.Key)) request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
                 }
                 catch { }
             }
