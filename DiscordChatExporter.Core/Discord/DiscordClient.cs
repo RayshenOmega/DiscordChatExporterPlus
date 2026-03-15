@@ -74,7 +74,7 @@ public class DiscordClient(
 
                         var properties = root.GetProperty("properties");
 
-                        string userAgent = properties.GetProperty("user_agent").GetString()!;
+                        string userAgent = properties.GetProperty("browser_user_agent").GetString()!;
                         string browserVersion = properties.GetProperty("browser_version").GetString()!;
                         string osType = properties.GetProperty("os").GetString()!;
 
