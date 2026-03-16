@@ -50,7 +50,7 @@ public class DiscordClient(
             // discord flags requests that don't look like a real browser
             if (tokenKind != TokenKind.Bot)
             {
-                await Task.Run(async () =>
+                try
                 {
                     // Cache headers from the external API so we don't make this request on every call.
 
@@ -105,7 +105,8 @@ public class DiscordClient(
 
                     foreach (var kv in _cachedBrowserHeaders)
                          if (!request.Headers.Contains(kv.Key)) request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
-                })
+                } 
+                catch {}
             }
 
                 var response = await Http.Client.SendAsync(
