@@ -42,7 +42,7 @@ public partial class LocalizationManager
                 *  Ваш бот повинен мати включений **Message Content Intent** для читання повідомлень
                 """,
             [nameof(TokenHelpText)] =
-                "Якщо у вас є запитання або проблеми, зверніться до [документації](https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs)",
+                "Якщо у вас є запитання або проблеми, зверніться до [документації](https://github.com/nulldg/DiscordChatExporterPlus/tree/master/.docs)",
             // Settings
             [nameof(SettingsTitle)] = "Налаштування",
             [nameof(ThemeLabel)] = "Тема",
