@@ -26,8 +26,8 @@ public class UpdateService(SettingsService settingsService) : IDisposable
             : null;
 
     private Version? _updateVersion;
-    private bool _updatePrepared;
-    private bool _updaterLaunched;
+    private bool _isUpdatePrepared;
+    private bool _isUpdaterLaunched;
 
     public async ValueTask<Version?> CheckForUpdatesAsync()
     {
@@ -52,7 +52,7 @@ public class UpdateService(SettingsService settingsService) : IDisposable
         try
         {
             await _updateManager.PrepareUpdateAsync(_updateVersion = version);
-            _updatePrepared = true;
+            _isUpdatePrepared = true;
         }
         catch (UpdaterAlreadyLaunchedException)
         {
@@ -72,13 +72,13 @@ public class UpdateService(SettingsService settingsService) : IDisposable
         if (!settingsService.IsAutoUpdateEnabled)
             return;
 
-        if (_updateVersion is null || !_updatePrepared || _updaterLaunched)
+        if (_updateVersion is null || !_isUpdatePrepared || _isUpdaterLaunched)
             return;
 
         try
         {
             _updateManager.LaunchUpdater(_updateVersion, needRestart);
-            _updaterLaunched = true;
+            _isUpdaterLaunched = true;
         }
         catch (UpdaterAlreadyLaunchedException)
         {
