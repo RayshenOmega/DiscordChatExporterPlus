@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,6 +18,7 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord;
 
+
 public class DiscordClient(
     string token,
     RateLimitPreference rateLimitPreference = RateLimitPreference.RespectAll
@@ -25,6 +26,7 @@ public class DiscordClient(
 {
     private readonly Uri _baseUri = new("https://discord.com/api/v10/", UriKind.Absolute);
     private TokenKind? _resolvedTokenKind;
+    private static Dictionary<string, string>? _cachedBrowserHeaders;
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -43,6 +45,69 @@ public class DiscordClient(
                     "Authorization",
                     tokenKind == TokenKind.Bot ? $"Bot {token}" : token
                 );
+
+            // add browser headers like x-super-properties and user-agent
+            // discord flags requests that don't look like a real browser
+            if (tokenKind != TokenKind.Bot)
+            {
+                try
+                {
+                    // Cache headers from the external API so we don't make this request on every call.
+
+                    if (_cachedBrowserHeaders is null)
+                    {
+                        using var apiReq = new HttpRequestMessage(
+                            HttpMethod.Post,
+                            "https://cordapi.dolfi.es/api/v2/properties/web"
+                        );
+
+                        using var apiRes = await Http.Client.SendAsync(apiReq, innerCancellationToken);
+                        apiRes.EnsureSuccessStatusCode();
+
+                        var apiJson = await apiRes.Content.ReadAsStringAsync(innerCancellationToken);
+
+                        using var doc = JsonDocument.Parse(apiJson);
+
+                        var root = doc.RootElement;
+
+                        string xspBase64 = root.GetProperty("encoded").GetString()!;
+
+                        var properties = root.GetProperty("properties");
+
+                        string userAgent = properties.GetProperty("browser_user_agent").GetString()!;
+                        string browserVersion = properties.GetProperty("browser_version").GetString()!;
+                        string osType = properties.GetProperty("os").GetString()!;
+
+                        string chromeMajor = browserVersion.Split('.')[0];
+
+                        var headers = new Dictionary<string, string>
+                        {
+                            ["sec-ch-ua-platform"] = $"\"{osType}\"",
+                            ["referer"] = "https://discord.com/app",
+                            ["x-debug-options"] = "bugReporterEnabled",
+                            ["accept-language"] = "en-US,en;q=0.9",
+
+                            ["sec-ch-ua"] =
+                                $"\"Chromium\";v=\"{chromeMajor}\", \"Not;A=Brand\";v=\"99\"",
+
+                            ["sec-ch-ua-mobile"] = "?0",
+
+                            ["x-discord-timezone"] = "Europe/Warsaw",
+                            ["x-context-properties"] = "eyJsb2NhdGlvbiI6Ii9hcHAifQ==",
+                            ["x-discord-locale"] = "en-US",
+
+                            ["user-agent"] = userAgent,
+                            ["x-super-properties"] = xspBase64,
+                        };
+
+                        _cachedBrowserHeaders = headers;
+                    }
+
+                    foreach (var kv in _cachedBrowserHeaders)
+                         if (!request.Headers.Contains(kv.Key)) request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+                } 
+                catch {}
+            }
 
                 var response = await Http.Client.SendAsync(
                     request,
