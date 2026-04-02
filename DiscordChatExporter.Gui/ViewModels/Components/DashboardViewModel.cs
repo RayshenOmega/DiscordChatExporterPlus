@@ -53,14 +53,14 @@ public partial class DashboardViewModel : ViewModelBase
         _eventRoot.Add(
             Progress.WatchProperty(
                 o => o.Current,
-                () => OnPropertyChanged(nameof(IsProgressIndeterminate))
+                _ => OnPropertyChanged(nameof(IsProgressIndeterminate))
             )
         );
 
         _eventRoot.Add(
             SelectedChannels.WatchProperty(
                 o => o.Count,
-                () => ExportCommand.NotifyCanExecuteChanged()
+                _ => ExportCommand.NotifyCanExecuteChanged()
             )
         );
     }

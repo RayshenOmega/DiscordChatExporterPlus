@@ -56,11 +56,9 @@ public class App : Application, IDisposable
                 .GetRequiredService<SettingsService>()
                 .WatchProperty(
                     o => o.Theme,
-                    () =>
+                    v =>
                     {
-                        RequestedThemeVariant = _services
-                            .GetRequiredService<SettingsService>()
-                            .Theme switch
+                        RequestedThemeVariant = v switch
                         {
                             ThemeVariant.Light => Avalonia.Styling.ThemeVariant.Light,
                             ThemeVariant.Dark => Avalonia.Styling.ThemeVariant.Dark,
