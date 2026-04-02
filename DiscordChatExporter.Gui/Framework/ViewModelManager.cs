@@ -10,12 +10,12 @@ namespace DiscordChatExporter.Gui.Framework;
 
 public class ViewModelManager(IServiceProvider services)
 {
-    public MainViewModel CreateMainViewModel() => services.GetRequiredService<MainViewModel>();
+    public MainViewModel GetMainViewModel() => services.GetRequiredService<MainViewModel>();
 
-    public DashboardViewModel CreateDashboardViewModel() =>
+    public DashboardViewModel GetDashboardViewModel() =>
         services.GetRequiredService<DashboardViewModel>();
 
-    public ExportSetupViewModel CreateExportSetupViewModel(
+    public ExportSetupViewModel GetExportSetupViewModel(
         Guild guild,
         IReadOnlyList<Channel> channels
     )
@@ -28,7 +28,7 @@ public class ViewModelManager(IServiceProvider services)
         return viewModel;
     }
 
-    public MessageBoxViewModel CreateMessageBoxViewModel(
+    public MessageBoxViewModel GetMessageBoxViewModel(
         string title,
         string message,
         string? okButtonText,
@@ -45,9 +45,9 @@ public class ViewModelManager(IServiceProvider services)
         return viewModel;
     }
 
-    public MessageBoxViewModel CreateMessageBoxViewModel(string title, string message) =>
-        CreateMessageBoxViewModel(title, message, "CLOSE", null);
+    public MessageBoxViewModel GetMessageBoxViewModel(string title, string message) =>
+        GetMessageBoxViewModel(title, message, "CLOSE", null);
 
-    public SettingsViewModel CreateSettingsViewModel() =>
+    public SettingsViewModel GetSettingsViewModel() =>
         services.GetRequiredService<SettingsViewModel>();
 }

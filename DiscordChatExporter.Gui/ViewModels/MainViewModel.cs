@@ -21,14 +21,14 @@ public partial class MainViewModel(
 {
     public string Title { get; } = $"{Program.Name} v{Program.VersionString}";
 
-    public DashboardViewModel Dashboard { get; } = viewModelManager.CreateDashboardViewModel();
+    public DashboardViewModel Dashboard { get; } = viewModelManager.GetDashboardViewModel();
 
     private async Task ShowUkraineSupportMessageAsync()
     {
         if (!settingsService.IsUkraineSupportMessageEnabled)
             return;
 
-        var dialog = viewModelManager.CreateMessageBoxViewModel(
+        var dialog = viewModelManager.GetMessageBoxViewModel(
             localizationManager.UkraineSupportTitle,
             localizationManager.UkraineSupportMessage,
             localizationManager.LearnMoreButton,
@@ -52,7 +52,7 @@ public partial class MainViewModel(
         if (Debugger.IsAttached)
             return;
 
-        var dialog = viewModelManager.CreateMessageBoxViewModel(
+        var dialog = viewModelManager.GetMessageBoxViewModel(
             localizationManager.UnstableBuildTitle,
             string.Format(localizationManager.UnstableBuildMessage, Program.Name),
             localizationManager.SeeReleasesButton,

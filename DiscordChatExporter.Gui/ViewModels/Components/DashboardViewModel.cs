@@ -105,7 +105,7 @@ public partial class DashboardViewModel : ViewModelBase
 
     [RelayCommand]
     private async Task ShowSettingsAsync() =>
-        await _dialogManager.ShowDialogAsync(_viewModelManager.CreateSettingsViewModel());
+        await _dialogManager.ShowDialogAsync(_viewModelManager.GetSettingsViewModel());
 
     private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
@@ -142,7 +142,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+            var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingGuildsTitle,
                 ex.ToString()
             );
@@ -209,7 +209,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+            var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingChannelsTitle,
                 ex.ToString()
             );
@@ -236,7 +236,7 @@ public partial class DashboardViewModel : ViewModelBase
             if (_discord is null || SelectedGuild is null || !SelectedChannels.Any())
                 return;
 
-            var dialog = _viewModelManager.CreateExportSetupViewModel(
+            var dialog = _viewModelManager.GetExportSetupViewModel(
                 SelectedGuild,
                 SelectedChannels.Select(c => c.Channel).ToArray()
             );
@@ -315,7 +315,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+            var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorExportingTitle,
                 ex.ToString()
             );

@@ -101,9 +101,7 @@ public class App : Application, IDisposable
         {
             desktop.MainWindow = _services
                 .GetRequiredService<ViewManager>()
-                .TryBindWindow(
-                    _services.GetRequiredService<ViewModelManager>().CreateMainViewModel()
-                );
+                .TryBindWindow(_services.GetRequiredService<ViewModelManager>().GetMainViewModel());
 
             // Although `App.Dispose()` is invoked from `Program.Main(...)`, on some platforms
             // it may be called too late in the shutdown lifecycle. Attach an exit
