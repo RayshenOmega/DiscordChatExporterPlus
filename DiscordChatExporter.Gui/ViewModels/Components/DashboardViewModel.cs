@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,11 +95,12 @@ public partial class DashboardViewModel : ViewModelBase
 
     public ObservableCollection<ChannelConnection> SelectedChannels { get; } = [];
 
-    [RelayCommand]
-    private void Initialize()
+    public override Task InitializeAsync()
     {
         if (!string.IsNullOrWhiteSpace(_settingsService.LastToken))
             Token = _settingsService.LastToken;
+
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

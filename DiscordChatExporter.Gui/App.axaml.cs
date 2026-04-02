@@ -12,7 +12,6 @@ using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
-using DiscordChatExporter.Gui.Views;
 using Material.Styles.Themes;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,11 +19,8 @@ namespace DiscordChatExporter.Gui;
 
 public class App : Application, IDisposable
 {
-    private readonly DisposableCollector _eventRoot = new();
-
     private readonly ServiceProvider _services;
-    private readonly SettingsService _settingsService;
-    private readonly MainViewModel _mainViewModel;
+    private readonly DisposableCollector _eventRoot = new();
 
     private bool _isDisposed;
 
@@ -53,33 +49,28 @@ public class App : Application, IDisposable
         services.AddTransient<SettingsViewModel>();
 
         _services = services.BuildServiceProvider(true);
-        _settingsService = _services.GetRequiredService<SettingsService>();
-        _mainViewModel = _services.GetRequiredService<ViewModelManager>().CreateMainViewModel();
 
         // Re-initialize the theme when the user changes it
         _eventRoot.Add(
-            _settingsService.WatchProperty(
-                o => o.Theme,
-                () =>
-                {
-                    RequestedThemeVariant = _settingsService.Theme switch
+            _services
+                .GetRequiredService<SettingsService>()
+                .WatchProperty(
+                    o => o.Theme,
+                    () =>
                     {
-                        ThemeVariant.Light => Avalonia.Styling.ThemeVariant.Light,
-                        ThemeVariant.Dark => Avalonia.Styling.ThemeVariant.Dark,
-                        _ => Avalonia.Styling.ThemeVariant.Default,
-                    };
+                        RequestedThemeVariant = _services
+                            .GetRequiredService<SettingsService>()
+                            .Theme switch
+                        {
+                            ThemeVariant.Light => Avalonia.Styling.ThemeVariant.Light,
+                            ThemeVariant.Dark => Avalonia.Styling.ThemeVariant.Dark,
+                            _ => Avalonia.Styling.ThemeVariant.Default,
+                        };
 
-                    InitializeTheme();
-                }
-            )
+                        InitializeTheme();
+                    }
+                )
         );
-    }
-
-    public override void Initialize()
-    {
-        base.Initialize();
-
-        AvaloniaXamlLoader.Load(this);
     }
 
     private void InitializeTheme()
@@ -97,25 +88,28 @@ public class App : Application, IDisposable
                 : Theme.Create(Theme.Dark, Color.Parse("#E8E8E8"), Color.Parse("#F9A825"));
     }
 
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        AvaloniaXamlLoader.Load(this);
+    }
+
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainView { DataContext = _mainViewModel };
-
-            void OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs args)
-            {
-                if (sender is IControlledApplicationLifetime lifetime)
-                    lifetime.Exit -= OnExit;
-
-                Dispose();
-            }
+            desktop.MainWindow = _services
+                .GetRequiredService<ViewManager>()
+                .TryBindWindow(
+                    _services.GetRequiredService<ViewModelManager>().CreateMainViewModel()
+                );
 
             // Although `App.Dispose()` is invoked from `Program.Main(...)`, on some platforms
             // it may be called too late in the shutdown lifecycle. Attach an exit
             // handler to ensure timely disposal as a safeguard.
             // https://github.com/Tyrrrz/YoutubeDownloader/issues/795
-            desktop.Exit += OnExit;
+            desktop.Exit += (_, _) => Dispose();
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -124,7 +118,7 @@ public class App : Application, IDisposable
         InitializeTheme();
 
         // Load settings
-        _settingsService.Load();
+        _services.GetRequiredService<SettingsService>().Load();
     }
 
     private void Application_OnActualThemeVariantChanged(object? sender, EventArgs args) =>

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia;
-using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
@@ -100,8 +99,7 @@ public partial class MainViewModel(
         }
     }
 
-    [RelayCommand]
-    private async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await ShowUkraineSupportMessageAsync();
         await ShowDevelopmentBuildMessageAsync();

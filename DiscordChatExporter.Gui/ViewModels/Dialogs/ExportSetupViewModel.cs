@@ -102,8 +102,7 @@ public partial class ExportSetupViewModel(
             ? MessageFilter.Parse(MessageFilterValue)
             : MessageFilter.Null;
 
-    [RelayCommand]
-    private void Initialize()
+    public override Task InitializeAsync()
     {
         // Persist preferences
         SelectedFormat = settingsService.LastExportFormat;
@@ -126,6 +125,8 @@ public partial class ExportSetupViewModel(
             || ShouldReuseAssets
             || !string.IsNullOrWhiteSpace(AssetsDirPath)
             || IsReverseMessageOrder;
+
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

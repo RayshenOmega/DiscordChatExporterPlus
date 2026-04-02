@@ -12,11 +12,8 @@ public partial class DashboardView : UserControl<DashboardViewModel>
 {
     public DashboardView() => InitializeComponent();
 
-    private void UserControl_OnLoaded(object? sender, RoutedEventArgs args)
-    {
-        DataContext.InitializeCommand.Execute(null);
+    private void UserControl_OnLoaded(object? sender, RoutedEventArgs args) =>
         TokenValueTextBox.Focus();
-    }
 
     private void AvailableGuildsListBox_OnSelectionChanged(
         object? sender,
