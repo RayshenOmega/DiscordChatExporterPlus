@@ -5,11 +5,6 @@ using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 
-return await new CommandLineApplicationBuilder()
-    .AddCommandsFromThisAssembly()
-    .Build()
-    .RunAsync(args);
-
 [Command(Description = "Publishes the GUI app as a macOS .app bundle.")]
 public partial class PublishMacOSBundleCommand : ICommand
 {
