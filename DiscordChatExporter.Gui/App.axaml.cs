@@ -20,6 +20,8 @@ namespace DiscordChatExporter.Gui;
 public class App : Application, IDisposable
 {
     private readonly ServiceProvider _services;
+    private readonly SettingsService _settingsService;
+
     private readonly DisposableCollector _eventRoot = new();
 
     private bool _isDisposed;
@@ -49,25 +51,24 @@ public class App : Application, IDisposable
         services.AddTransient<SettingsViewModel>();
 
         _services = services.BuildServiceProvider(true);
+        _settingsService = _services.GetRequiredService<SettingsService>();
 
         // Re-initialize the theme when the user changes it
         _eventRoot.Add(
-            _services
-                .GetRequiredService<SettingsService>()
-                .WatchProperty(
-                    o => o.Theme,
-                    v =>
+            _settingsService.WatchProperty(
+                o => o.Theme,
+                v =>
+                {
+                    RequestedThemeVariant = v switch
                     {
-                        RequestedThemeVariant = v switch
-                        {
-                            ThemeVariant.Light => Avalonia.Styling.ThemeVariant.Light,
-                            ThemeVariant.Dark => Avalonia.Styling.ThemeVariant.Dark,
-                            _ => Avalonia.Styling.ThemeVariant.Default,
-                        };
+                        ThemeVariant.Light => Avalonia.Styling.ThemeVariant.Light,
+                        ThemeVariant.Dark => Avalonia.Styling.ThemeVariant.Dark,
+                        _ => Avalonia.Styling.ThemeVariant.Default,
+                    };
 
-                        InitializeTheme();
-                    }
-                )
+                    InitializeTheme();
+                }
+            )
         );
     }
 
@@ -95,6 +96,13 @@ public class App : Application, IDisposable
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Initialize the default theme, before a custom one (if any) is applied by loading settings
+        InitializeTheme();
+
+        // Load settings
+        _settingsService.Load();
+
+        // Initialize and configure the main window
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var viewManager = _services.GetRequiredService<ViewManager>();
@@ -110,12 +118,6 @@ public class App : Application, IDisposable
         }
 
         base.OnFrameworkInitializationCompleted();
-
-        // Set up custom theme colors
-        InitializeTheme();
-
-        // Load settings
-        _services.GetRequiredService<SettingsService>().Load();
     }
 
     private void Application_OnActualThemeVariantChanged(object? sender, EventArgs args) =>
