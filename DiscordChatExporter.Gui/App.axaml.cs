@@ -96,9 +96,6 @@ public class App : Application, IDisposable
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Initialize the default theme, before a custom one (if any) is applied by loading settings
-        InitializeTheme();
-
         // Load settings
         _settingsService.Load();
 
@@ -116,6 +113,9 @@ public class App : Application, IDisposable
             // https://github.com/Tyrrrz/YoutubeDownloader/issues/795
             desktop.Exit += (_, _) => Dispose();
         }
+
+        // Initialize the theme for the first time; must be done after the main window is created
+        InitializeTheme();
 
         base.OnFrameworkInitializationCompleted();
     }
