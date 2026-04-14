@@ -23,9 +23,9 @@
 **DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
 It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 
-> ❔ If you have questions or issues, **please refer to the [docs](.docs)**.
-
-> 💬 If you want to chat, **join my [Discord server](https://discord.gg/2SUWKFnHSm)**.
+> [!WARNING]
+> While **DiscordChatExporter** allows it, automating user accounts is against Discord TOS and may result in you getting banned.
+> If possible, use a bot to export chat logs from accessible channels.
 
 ## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/prime/docs/why-so-political.md)</sup>
 
