@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("guide", Description = "Explains how to obtain the token, server or channel ID.")]
-public class GuideCommand : ICommand
+public partial class GuideCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console)
     {

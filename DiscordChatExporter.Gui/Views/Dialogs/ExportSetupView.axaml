@@ -10,8 +10,7 @@
     xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
     x:Name="UserControl"
     Width="380"
-    x:DataType="dialogs:ExportSetupViewModel"
-    Loaded="UserControl_OnLoaded">
+    x:DataType="dialogs:ExportSetupViewModel">
     <Grid RowDefinitions="Auto,*,Auto">
         <!--  Guild/channel info  -->
         <Grid

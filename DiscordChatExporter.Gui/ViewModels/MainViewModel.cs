@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Avalonia;
-using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
@@ -20,7 +19,7 @@ public partial class MainViewModel(
 {
     public string Title { get; } = $"{Program.Name} v{Program.VersionString}";
 
-    public DashboardViewModel Dashboard { get; } = viewModelManager.CreateDashboardViewModel();
+    public DashboardViewModel Dashboard { get; } = viewModelManager.GetDashboardViewModel();
 
     private async Task CheckForUpdatesAsync()
     {
@@ -58,8 +57,7 @@ public partial class MainViewModel(
         }
     }
 
-    [RelayCommand]
-    private async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await CheckForUpdatesAsync();
     }

@@ -14,10 +14,7 @@
     Icon="/favicon.ico"
     RenderOptions.BitmapInterpolationMode="HighQuality"
     WindowStartupLocation="CenterScreen">
-    <dialogHostAvalonia:DialogHost
-        x:Name="DialogHost"
-        CloseOnClickAway="False"
-        Loaded="DialogHost_OnLoaded">
+    <dialogHostAvalonia:DialogHost x:Name="DialogHost" CloseOnClickAway="False">
         <materialStyles:SnackbarHost HostName="Root" SnackbarMaxCounts="3">
             <ContentControl Content="{Binding Dashboard}" />
         </materialStyles:SnackbarHost>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,14 +53,14 @@ public partial class DashboardViewModel : ViewModelBase
         _eventRoot.Add(
             Progress.WatchProperty(
                 o => o.Current,
-                () => OnPropertyChanged(nameof(IsProgressIndeterminate))
+                _ => OnPropertyChanged(nameof(IsProgressIndeterminate))
             )
         );
 
         _eventRoot.Add(
             SelectedChannels.WatchProperty(
                 o => o.Count,
-                () => ExportCommand.NotifyCanExecuteChanged()
+                _ => ExportCommand.NotifyCanExecuteChanged()
             )
         );
     }
@@ -96,16 +95,17 @@ public partial class DashboardViewModel : ViewModelBase
 
     public ObservableCollection<ChannelConnection> SelectedChannels { get; } = [];
 
-    [RelayCommand]
-    private void Initialize()
+    public override Task InitializeAsync()
     {
         if (!string.IsNullOrWhiteSpace(_settingsService.LastToken))
             Token = _settingsService.LastToken;
+
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
     private async Task ShowSettingsAsync() =>
-        await _dialogManager.ShowDialogAsync(_viewModelManager.CreateSettingsViewModel());
+        await _dialogManager.ShowDialogAsync(_viewModelManager.GetSettingsViewModel());
 
     private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
@@ -142,7 +142,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+            var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingGuildsTitle,
                 ex.ToString()
             );
@@ -209,7 +209,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+            var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingChannelsTitle,
                 ex.ToString()
             );
@@ -236,7 +236,7 @@ public partial class DashboardViewModel : ViewModelBase
             if (_discord is null || SelectedGuild is null || !SelectedChannels.Any())
                 return;
 
-            var dialog = _viewModelManager.CreateExportSetupViewModel(
+            var dialog = _viewModelManager.GetExportSetupViewModel(
                 SelectedGuild,
                 SelectedChannels.Select(c => c.Channel).ToArray()
             );
@@ -315,7 +315,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+            var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorExportingTitle,
                 ex.ToString()
             );

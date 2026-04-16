@@ -54,8 +54,7 @@ public partial class HyperLink : UserControl
     {
         if (Command is not null)
         {
-            if (Command.CanExecute(CommandParameter))
-                Command.Execute(CommandParameter);
+            Command.ExecuteIfCan(CommandParameter);
         }
         else if (!string.IsNullOrWhiteSpace(Url))
         {
